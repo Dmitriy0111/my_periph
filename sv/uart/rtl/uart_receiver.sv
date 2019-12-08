@@ -17,7 +17,6 @@ module uart_receiver
     input   logic   [15 : 0]    comp,           // compare input for setting baudrate
     output  logic   [7  : 0]    rx_data,        // received data
     output  logic   [0  : 0]    rx_valid,       // receiver data valid
-    input   logic   [0  : 0]    rx_val_set,     // receiver data valid set
     // uart rx side
     input   logic   [0  : 0]    uart_rx         // UART rx wire
 );
@@ -27,14 +26,12 @@ module uart_receiver
     logic   [15 : 0]    counter;        // counter for baudrate
     logic   [0  : 0]    idle2rec;       // idle to receive
     logic   [0  : 0]    rec2idle;       // receive to wait
-    logic   [0  : 0]    wait2idle;      // wait to idle 
 
     enum
     logic   [1  : 0]    {IDLE_s , RECEIVE_s} state, next_state;
 
     assign idle2rec  = uart_rx == '0;
     assign rec2idle  = bit_counter == 4'h9;
-    assign wait2idle = rx_val_set;
     
     assign rx_data = int_reg;
     assign rx_valid = rec2idle && ( state == RECEIVE_s );
