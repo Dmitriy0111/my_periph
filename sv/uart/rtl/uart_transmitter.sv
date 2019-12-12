@@ -17,7 +17,6 @@ module uart_transmitter
     input   logic   [15 : 0]    comp,       // compare input for setting baudrate
     input   logic   [7  : 0]    tx_data,    // data for transfer
     input   logic   [0  : 0]    req,        // request signal
-    output  logic   [0  : 0]    busy_tx,    
     output  logic   [0  : 0]    next_tx,    
     // uart tx side
     output  logic   [0  : 0]    uart_tx     // UART tx wire
@@ -39,7 +38,6 @@ module uart_transmitter
     assign start2tr   = counter >= comp;
     assign tr2stop    = bit_counter == 4'h8;
     assign stop2idle  = counter >= comp;
-    assign busy_tx    = state != IDLE_s;
     assign next_tx    = stop2idle && ( state == STOP_s );
 
     // Change FSM state

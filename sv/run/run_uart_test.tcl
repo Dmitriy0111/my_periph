@@ -11,12 +11,12 @@ vlog -sv ../sv/common/*.*v
 vlog -sv ../sv/uart/rtl/*.*v
 vlog -sv ../sv/uart/tb/*.*v
 
-vsim -novopt work.uart_top_si_tb
+vsim -novopt work.uart_tb
 
 add wave -divider  "testbench signals"
-add wave -position insertpoint sim:/uart_top_si_tb/*
+add wave -position insertpoint sim:/uart_tb/*
 add wave -divider  "dut signals"
-add wave -position insertpoint sim:/uart_top_si_tb/dut/*
+add wave -position insertpoint sim:/uart_tb/dut/*
 
 run -all
 

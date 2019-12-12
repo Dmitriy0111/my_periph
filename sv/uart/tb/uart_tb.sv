@@ -1,13 +1,13 @@
 /* 
-*  File            :   uart_top_si_tb.sv
+*  File            :   uart_tb.sv
 *  Autor           :   Vlasov D.V.
 *  Data            :   2019.04.24
 *  Language        :   SystemVerilog
-*  Description     :   This uart top module simple interface
+*  Description     :   This is testbench for uart module
 *  Copyright(c)    :   2019 Vlasov D.V.
 */
 
-module uart_top_si_tb();
+module uart_tb();
 
     timeprecision       1ns;
     timeunit            1ns;
@@ -30,11 +30,13 @@ module uart_top_si_tb();
     logic   [0  : 0]    clk;        // clk
     logic   [0  : 0]    rstn;       // reset
     // simple interface
-    logic   [3  : 0]    addr;       // address
+    logic   [4  : 0]    addr;       // address
     logic   [0  : 0]    re;
     logic   [0  : 0]    we;         // write enable
     logic   [31 : 0]    wd;         // write data
     logic   [31 : 0]    rd;         // read data
+    // IRQ
+    logic   [0  : 0]    irq;        // interrupt request
     // uart side
     logic   [0  : 0]    uart_tx;    // UART tx wire
     logic   [0  : 0]    uart_rx;    // UART rx wire
@@ -45,7 +47,7 @@ module uart_top_si_tb();
 
     assign uart_rx = uart_tx;
 
-    uart_top_si
+    uart
     dut
     (
         // reset and clock
@@ -57,6 +59,8 @@ module uart_top_si_tb();
         .we         ( we        ),  // write enable
         .wd         ( wd        ),  // write data
         .rd         ( rd        ),  // read data
+        // IRQ
+        .irq        ( irq       ),  // interrupt request
         // uart side
         .uart_tx    ( uart_tx   ),  // UART tx wire
         .uart_rx    ( uart_rx   )   // UART rx wire
@@ -84,14 +88,18 @@ module uart_top_si_tb();
         for(int i = 0 ; i < msg.len ; i++)
         begin
             $display("Send data = 0x%h (%c)",msg[i],msg[i]);
-            write_reg(4'h4,msg[i]);
+            write_reg(5'h4,msg[i]);
             for(;;)
             begin
-                read_reg(4'h0,ctrl_reg);
-                if( ctrl_reg & 8'h08 )
+                read_reg(5'h0,ctrl_reg);
+                if( irq )
                 begin
-                    read_reg(4'h4,rec_reg);
-                    $display("Received data = 0x%h (%c)",rec_reg,rec_reg);
+                    repeat(1 << uart_cr_0.rx_fifo_lvl)
+                    begin
+                        read_reg(5'h4,rec_reg);
+                        $display("Received data = 0x%h (%c)",rec_reg,rec_reg);
+                    end
+                    write_reg(5'h10,0);
                 end
                 if( !(ctrl_reg & 8'h04) )
                     break;
@@ -125,14 +133,15 @@ module uart_top_si_tb();
         wd = '0; 
         uart_cr_0.tr_en = '1;
         uart_cr_0.rec_en = '1;
-        uart_cr_0.rx_fifo_lvl = 2'b10;
-        uart_cr_0.tx_fifo_lvl = 2'b10;
+        uart_cr_0.rx_fifo_lvl = 2'b11;
+        uart_cr_0.tx_fifo_lvl = 2'b11;
         uart_cr_0.rx_full = '0;
         uart_cr_0.tx_full = '0;
-        write_reg(4'h0,uart_cr_0);
-        write_reg(4'h8,16'h200);
+        write_reg(5'h00,uart_cr_0);
+        write_reg(5'h08,16'h200);
+        write_reg(5'h0C,8'h08);
         send_msg(uart_msg);
         $stop;
     end
 
-endmodule : uart_top_si_tb
+endmodule : uart_tb

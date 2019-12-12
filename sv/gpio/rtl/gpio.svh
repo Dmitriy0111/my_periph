@@ -12,12 +12,12 @@
 
 typedef enum logic [4 : 0]
 {
-    GPIO_GPI   = 5'h00,
-    GPIO_GPO   = 5'h04,
-    GPIO_GPD   = 5'h08,
-    GPIO_IRQ_M = 5'h0C,
-    GPIO_CAP   = 5'h10,
-    GPIO_IRQ_V = 5'h14
+    GPIO_GPI    = 5'h00,
+    GPIO_GPO    = 5'h04,
+    GPIO_GPD    = 5'h08,
+    GPIO_IRQ_M  = 5'h0C,
+    GPIO_CAP    = 5'h10,
+    GPIO_IRQ_V  = 5'h14
 } gpio_e;
 
 `endif // SVH__GPIO

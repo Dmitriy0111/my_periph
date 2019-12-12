@@ -16,7 +16,7 @@ module fifo
     input   logic   [0        : 0]  clk,            // clock
     input   logic   [0        : 0]  rstn,           // reset
     // fifo write
-    input   logic   [1        : 0]  fifo_lvl,       // fifo level
+    input   logic   [1        : 0]  fifo_lvl,       // fifo full level trigger
     input   logic   [0        : 0]  we,             // write enable
     input   logic   [data_w-1 : 0]  wd,             // write data
     output  logic   [0        : 0]  fifo_full,      // fifo full
@@ -41,7 +41,7 @@ module fifo
         fifo_full = '0;
         case( fifo_lvl )
             2'b00   : fifo_full = fifo_c == 1;
-            2'b01   : fifo_full = fifo_c == (depth >> 1);
+            2'b01   : fifo_full = fifo_c == (depth >> 2);
             2'b10   : fifo_full = fifo_c == (depth >> 1);
             2'b11   : fifo_full = fifo_c == depth;
         endcase

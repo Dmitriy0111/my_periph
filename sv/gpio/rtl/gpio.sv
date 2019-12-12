@@ -21,8 +21,8 @@ module gpio
     input   logic   [0        : 0]  we,     // write enable
     input   logic   [31       : 0]  wd,     // write data
     output  logic   [31       : 0]  rd,     // read data
-    // interrupt
-    output  logic   [0        : 0]  irq,    // interrupt
+    // IRQ
+    output  logic   [0        : 0]  irq,    // interrupt request
     // GPIO side
     input   logic   [gpio_w-1 : 0]  gpi,    // GPIO input
     output  logic   [gpio_w-1 : 0]  gpo,    // GPIO output
@@ -48,7 +48,7 @@ module gpio
     logic   [gpio_w-1 : 0]  irq_v_we;
     logic   [gpio_w-1 : 0]  irq_v_we_f;
 
-    genvar irq_i;
+    genvar                  irq_i;
 
     // assign inputs/outputs
     assign gpo    = gpio_o;
@@ -76,13 +76,13 @@ module gpio
     end
 
     generate
-        for(irq_i = 0 ; irq_i < gpio_w ; irq_i++ )
+        for(irq_i = 0 ; irq_i < gpio_w ; irq_i++)
         begin : gen_irq_regs
             assign posedge_cap[irq_i] = (   gpi_sync[irq_i] ) && ( ~ gpio_i[irq_i] ) && irq_m[irq_i] && (   cap[irq_i] );
             assign negedge_cap[irq_i] = ( ~ gpi_sync[irq_i] ) && (   gpio_i[irq_i] ) && irq_m[irq_i] && ( ~ cap[irq_i] );
-            assign irq_v_we[irq_i] = we_find( we, addr, GPIO_IRQ_V );
-            assign irq_v_we_f[irq_i] = posedge_cap[irq_i] || negedge_cap[irq_i] || irq_v_we[irq_i];
-            assign irq_v_wd[irq_i] =   posedge_cap[irq_i] || negedge_cap[irq_i] ? '1 : wd[irq_i];
+            assign irq_v_we[irq_i]    = we_find( we, addr, GPIO_IRQ_V );
+            assign irq_v_we_f[irq_i]  = posedge_cap[irq_i] || negedge_cap[irq_i] || irq_v_we[irq_i];
+            assign irq_v_wd[irq_i]    = posedge_cap[irq_i] || negedge_cap[irq_i] ? '1 : wd[irq_i];
             reg_we  #( 1 ) irq_v_reg  ( clk, rstn, irq_v_we_f[irq_i], irq_v_wd[irq_i], irq_v[irq_i] );
         end
     endgenerate
@@ -94,7 +94,7 @@ module gpio
     reg_we  #(    gpio_w ) irq_m_reg        ( clk, rstn, irq_m_we, wd[0 +: gpio_w], irq_m    );
     reg_we  #(    gpio_w ) cap_reg          ( clk, rstn, cap_we  , wd[0 +: gpio_w], cap      );
 
-    function automatic logic [0 : 0] we_find(logic [0 : 0] we_in, logic [2 : 0] addr_in, logic [2 : 0] addr_v);
+    function automatic logic [0 : 0] we_find(logic [0 : 0] we_in, logic [31 : 0] addr_in, logic [31 : 0] addr_v);
         return we_in && ( addr_in == addr_v );
     endfunction : we_find
 
