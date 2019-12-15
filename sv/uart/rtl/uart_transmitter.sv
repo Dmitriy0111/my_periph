@@ -1,7 +1,7 @@
 /* 
 *  File            :   uart_transmitter.sv
 *  Autor           :   Vlasov D.V.
-*  Data            :   2019.04.24
+*  Data            :   2019.12.05
 *  Language        :   SystemVerilog
 *  Description     :   This uart transmitter module
 *  Copyright(c)    :   2019 Vlasov D.V.
@@ -14,7 +14,7 @@ module uart_transmitter
     input   logic   [0  : 0]    rstn,       // reset
     // controller side interface
     input   logic   [0  : 0]    tr_en,      // transmitter enable
-    input   logic   [15 : 0]    comp,       // compare input for setting baudrate
+    input   logic   [15 : 0]    dfv,        // divide frequency value
     input   logic   [7  : 0]    tx_data,    // data for transfer
     input   logic   [0  : 0]    req,        // request signal
     output  logic   [0  : 0]    next_tx,    
@@ -35,9 +35,9 @@ module uart_transmitter
     logic   [1  : 0]    { IDLE_s, START_s, TRANSMIT_s, STOP_s } state, next_state;
 
     assign idle2start = req;
-    assign start2tr   = counter >= comp;
+    assign start2tr   = counter >= dfv;
     assign tr2stop    = bit_counter == 4'h8;
-    assign stop2idle  = counter >= comp;
+    assign stop2idle  = counter >= dfv;
     assign next_tx    = stop2idle && ( state == STOP_s );
 
     // Change FSM state
@@ -90,14 +90,14 @@ module uart_transmitter
                 begin
                     uart_tx <= '0;
                     counter <= counter + 1'b1;
-                    if( counter >= comp )
+                    if( counter >= dfv )
                         counter <= '0;
                 end
                 TRANSMIT_s  : 
                 begin
                     uart_tx <= int_reg[bit_counter];
                     counter <= counter + 1'b1;
-                    if( counter >= comp )
+                    if( counter >= dfv )
                     begin
                         counter <= '0;
                         bit_counter <= bit_counter + 1'b1;
@@ -111,7 +111,7 @@ module uart_transmitter
                 STOP_s  : 
                 begin
                     counter <= counter + 1'b1;
-                    if( counter >= comp )
+                    if( counter >= dfv )
                         counter <= '0;
                 end
             endcase

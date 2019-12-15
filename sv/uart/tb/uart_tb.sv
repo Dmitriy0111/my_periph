@@ -1,25 +1,18 @@
 /* 
 *  File            :   uart_tb.sv
 *  Autor           :   Vlasov D.V.
-*  Data            :   2019.04.24
+*  Data            :   2019.12.10
 *  Language        :   SystemVerilog
 *  Description     :   This is testbench for uart module
 *  Copyright(c)    :   2019 Vlasov D.V.
 */
 
+`include "../rtl/uart.svh"
+
 module uart_tb();
 
     timeprecision       1ns;
     timeunit            1ns;
-
-    typedef struct packed{
-        logic   [1 : 0]     rx_fifo_lvl;
-        logic   [1 : 0]     tx_fifo_lvl;
-        logic   [0 : 0]     rx_full;
-        logic   [0 : 0]     tx_full;
-        logic   [0 : 0]     rec_en;
-        logic   [0 : 0]     tr_en;
-    } uart_cr;
 
     parameter           T = 10,
                         start_del = 200,
@@ -41,9 +34,9 @@ module uart_tb();
     logic   [0  : 0]    uart_tx;    // UART tx wire
     logic   [0  : 0]    uart_rx;    // UART rx wire
 
-    uart_cr             uart_cr_0;
+    uart_cr_v           uart_cr_0;
 
-    string  uart_msg = "Hello World!\n";
+    string              uart_msg = "Hello World!\n";
 
     assign uart_rx = uart_tx;
 
@@ -133,8 +126,8 @@ module uart_tb();
         wd = '0; 
         uart_cr_0.tr_en = '1;
         uart_cr_0.rec_en = '1;
-        uart_cr_0.rx_fifo_lvl = 2'b11;
-        uart_cr_0.tx_fifo_lvl = 2'b11;
+        uart_cr_0.rx_fifo_lvl = 2'b10;
+        uart_cr_0.tx_fifo_lvl = 2'b10;
         uart_cr_0.rx_full = '0;
         uart_cr_0.tx_full = '0;
         write_reg(5'h00,uart_cr_0);

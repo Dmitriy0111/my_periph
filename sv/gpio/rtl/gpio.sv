@@ -54,23 +54,23 @@ module gpio
     assign gpo    = gpio_o;
     assign gpd    = gpio_d;
     // assign write enable signals
-    assign gpo_we   = we_find( we, addr, GPIO_GPO   );
-    assign gpd_we   = we_find( we, addr, GPIO_GPD   );
-    assign irq_m_we = we_find( we, addr, GPIO_IRQ_M );
-    assign cap_we   = we_find( we, addr, GPIO_CAP   );
+    assign gpo_we   = we_find( we , addr , GPIO_GPO   );
+    assign gpd_we   = we_find( we , addr , GPIO_GPD   );
+    assign irq_m_we = we_find( we , addr , GPIO_IRQ_M );
+    assign cap_we   = we_find( we , addr , GPIO_CAP   );
 
-    assign irq = |irq_v;
+    assign irq = | irq_v;
 
     always_comb
     begin
-        rd = gpio_i;
+        rd = { '0 , gpio_i };
         casex( addr[0 +: 5] )
-            GPIO_GPI    : rd = gpio_i;
-            GPIO_GPO    : rd = gpio_o;
-            GPIO_GPD    : rd = gpio_d;
-            GPIO_IRQ_M  : rd = irq_m;
-            GPIO_CAP    : rd = cap;
-            GPIO_IRQ_V  : rd = irq_v;
+            GPIO_GPI    : rd = { '0 , gpio_i };
+            GPIO_GPO    : rd = { '0 , gpio_o };
+            GPIO_GPD    : rd = { '0 , gpio_d };
+            GPIO_IRQ_M  : rd = { '0 , irq_m  };
+            GPIO_CAP    : rd = { '0 , cap    };
+            GPIO_IRQ_V  : rd = { '0 , irq_v  };
             default     : ;
         endcase
     end
@@ -83,16 +83,16 @@ module gpio
             assign irq_v_we[irq_i]    = we_find( we, addr, GPIO_IRQ_V );
             assign irq_v_we_f[irq_i]  = posedge_cap[irq_i] || negedge_cap[irq_i] || irq_v_we[irq_i];
             assign irq_v_wd[irq_i]    = posedge_cap[irq_i] || negedge_cap[irq_i] ? '1 : wd[irq_i];
-            reg_we  #( 1 ) irq_v_reg  ( clk, rstn, irq_v_we_f[irq_i], irq_v_wd[irq_i], irq_v[irq_i] );
+            reg_we  #( 1 ) irq_v_reg  ( clk , rstn , irq_v_we_f[irq_i] , irq_v_wd[irq_i] , irq_v[irq_i] );
         end
     endgenerate
 
-    sync    #( 2, gpio_w ) sync_in_chain    ( clk, rstn,           gpi            , gpi_sync );
-    reg_we  #(    gpio_w ) gpio_i_reg       ( clk, rstn, '1      , gpi_sync       , gpio_i   );
-    reg_we  #(    gpio_w ) gpio_o_reg       ( clk, rstn, gpo_we  , wd[0 +: gpio_w], gpio_o   );
-    reg_we  #(    gpio_w ) gpio_d_reg       ( clk, rstn, gpd_we  , wd[0 +: gpio_w], gpio_d   );
-    reg_we  #(    gpio_w ) irq_m_reg        ( clk, rstn, irq_m_we, wd[0 +: gpio_w], irq_m    );
-    reg_we  #(    gpio_w ) cap_reg          ( clk, rstn, cap_we  , wd[0 +: gpio_w], cap      );
+    sync    #( 2, gpio_w ) sync_in_chain    ( clk , rstn ,            gpi             , gpi_sync );
+    reg_we  #(    gpio_w ) gpio_i_reg       ( clk , rstn , '1       , gpi_sync        , gpio_i   );
+    reg_we  #(    gpio_w ) gpio_o_reg       ( clk , rstn , gpo_we   , wd[0 +: gpio_w] , gpio_o   );
+    reg_we  #(    gpio_w ) gpio_d_reg       ( clk , rstn , gpd_we   , wd[0 +: gpio_w] , gpio_d   );
+    reg_we  #(    gpio_w ) irq_m_reg        ( clk , rstn , irq_m_we , wd[0 +: gpio_w] , irq_m    );
+    reg_we  #(    gpio_w ) cap_reg          ( clk , rstn , cap_we   , wd[0 +: gpio_w] , cap      );
 
     function automatic logic [0 : 0] we_find(logic [0 : 0] we_in, logic [31 : 0] addr_in, logic [31 : 0] addr_v);
         return we_in && ( addr_in == addr_v );

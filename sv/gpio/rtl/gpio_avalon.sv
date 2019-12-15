@@ -1,7 +1,7 @@
 /*
 *  File            :   gpio_avalon.sv
 *  Autor           :   Vlasov D.V.
-*  Data            :   2019.12.10
+*  Data            :   2019.12.12
 *  Language        :   SystemVerilog
 *  Description     :   This is avalon GPIO module
 *  Copyright(c)    :   2018 - 2019 Vlasov D.V.
@@ -37,7 +37,7 @@ module gpio_avalon
     assign we = chipselect && write;
     assign wd = writedata;
 
-    reg_we  #( 32 ) rd_ff   ( clk, rstn, '1, rd, readdata );
+    reg_we  #( 32 ) rd_ff   ( clk , rstn , '1 , rd , readdata );
 
     gpio
     #(

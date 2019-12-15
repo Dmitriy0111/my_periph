@@ -1,7 +1,7 @@
 /*
 *  File            :   gpio_apb.sv
 *  Autor           :   Vlasov D.V.
-*  Data            :   2019.12.10
+*  Data            :   2019.12.12
 *  Language        :   SystemVerilog
 *  Description     :   This is apb GPIO module
 *  Copyright(c)    :   2018 - 2019 Vlasov D.V.
@@ -40,7 +40,7 @@ module gpio_apb
 
     assign addr = paddr;
     assign we = psel && pwrite && penable;
-    assign wd = writedata;
+    assign wd = pwdata;
     assign pready = penable;
 
     gpio

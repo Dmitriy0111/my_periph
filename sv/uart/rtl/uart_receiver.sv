@@ -14,7 +14,7 @@ module uart_receiver
     input   logic   [0  : 0]    rstn,           // reset
     // controller side interface
     input   logic   [0  : 0]    rec_en,         // receiver enable
-    input   logic   [15 : 0]    comp,           // compare input for setting baudrate
+    input   logic   [15 : 0]    dfv,            // divide frequency value
     output  logic   [7  : 0]    rx_data,        // received data
     output  logic   [0  : 0]    rx_valid,       // receiver data valid
     // uart rx side
@@ -28,7 +28,7 @@ module uart_receiver
     logic   [0  : 0]    rec2idle;       // receive to wait
 
     enum
-    logic   [1  : 0]    {IDLE_s , RECEIVE_s} state, next_state;
+    logic   [1  : 0]    { IDLE_s , RECEIVE_s } state, next_state;
 
     assign idle2rec  = uart_rx == '0;
     assign rec2idle  = bit_counter == 4'h9;
@@ -45,11 +45,11 @@ module uart_receiver
     // Finding next state for FSM
     always_comb
     begin
-        next_state <= state;
+        next_state = state;
         case( state )
-            IDLE_s      : next_state <= idle2rec  ? RECEIVE_s : state;
-            RECEIVE_s   : next_state <= rec2idle  ? IDLE_s    : state;
-            default     : next_state <= IDLE_s;
+            IDLE_s      : next_state = idle2rec ? RECEIVE_s : state;
+            RECEIVE_s   : next_state = rec2idle ? IDLE_s    : state;
+            default     : next_state = IDLE_s;
         endcase
     end
     // Other FSM sequence logic
@@ -76,12 +76,12 @@ module uart_receiver
                 RECEIVE_s   :
                 begin
                     counter <= counter + 1'b1;
-                    if( counter >= comp )
+                    if( counter >= dfv )
                     begin
                         counter <= '0;
                         bit_counter <= bit_counter + 1'b1;
                     end
-                    if( counter == comp >> 2 )
+                    if( counter == dfv >> 2 )
                         int_reg <= { uart_rx , int_reg[7 : 1] };
                 end
                 default     : ;

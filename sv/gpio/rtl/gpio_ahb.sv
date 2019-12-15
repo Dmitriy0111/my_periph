@@ -1,7 +1,7 @@
 /*
 *  File            :   gpio_ahb.sv
 *  Autor           :   Vlasov D.V.
-*  Data            :   2019.12.10
+*  Data            :   2019.12.12
 *  Language        :   SystemVerilog
 *  Description     :   This is apb GPIO module
 *  Copyright(c)    :   2018 - 2019 Vlasov D.V.
@@ -46,9 +46,9 @@ module gpio_ahb
     assign wd = hwdata;
     assign hrdata = rd;
 
-    reg_we  #( 5 )  addr_ff ( hclk, hresetn, '1, haddr , addr   );
-    reg_we  #( 1 )  we_ff   ( hclk, hresetn, '1, we_req, we     );
-    reg_we  #( 1 )  we_ff   ( hclk, hresetn, '1, tr_req, hready );
+    reg_we  #( 5 )  addr_ff     ( hclk , hresetn , '1 , haddr  , addr   );
+    reg_we  #( 1 )  we_ff       ( hclk , hresetn , '1 , we_req , we     );
+    reg_we  #( 1 )  hready_ff   ( hclk , hresetn , '1 , tr_req , hready );
 
     gpio
     #(

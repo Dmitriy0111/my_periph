@@ -33,8 +33,8 @@ module fifo
     logic   [$clog2(depth)   : 0]   fifo_c;
 
     assign rd = fifo_mem[rd_addr];
-    //assign fifo_full = fifo_c == depth;
-    assign fifo_emp  = fifo_c == 0;
+    
+    assign fifo_emp = fifo_c == 0;
 
     always_comb
     begin
