@@ -114,9 +114,13 @@ module spi
     reg_we  #( cs_w )   cs_v_ff     ( clk , rstn , cs_v_we       , wd[cs_w-1 : 0]      , cs_v                 );
 
     generate
-        for( irq_i = 0 ; irq_i < 8 ; irq_i++ )
+        for( irq_i = 0 ; irq_i < spi_irq_v_w ; irq_i++ )
         begin : gen_irq_ff
             reg_we  #( 1 )  irq_ff  ( clk , rstn , irq_v_we_f[irq_i] , irq_in[irq_i] , irq_out[irq_i] );
+        end
+        for( irq_i = spi_irq_v_w ; irq_i < 8 ; irq_i++ )
+        begin : gen_irq_oth_ff
+            assign irq_out[irq_i] = '0;
         end
     endgenerate
     

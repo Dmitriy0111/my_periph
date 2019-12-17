@@ -1,14 +1,16 @@
 /*
-*  File            :   uart_ahb.sv
+*  File            :   tmr_ahb.sv
 *  Autor           :   Vlasov D.V.
-*  Data            :   2019.12.13
+*  Data            :   2019.12.17
 *  Language        :   SystemVerilog
-*  Description     :   This is ahb UART module
+*  Description     :   This is ahb TMR module
 *  Copyright(c)    :   2019 Vlasov D.V.
 */
 
-module uart_ahb
-(
+module tmr_ahb
+#(
+    parameter                   tmr_w = 8
+)(
     // clock and reset
     input   logic   [0  : 0]    hclk,       // ahb clock
     input   logic   [0  : 0]    hresetn,    // ahb reset
@@ -25,49 +27,47 @@ module uart_ahb
     output  logic   [0  : 0]    hready,     // ahb slave ready signal
     // IRQ
     output  logic   [0  : 0]    irq,        // interrupt request
-    // UART side
-    output  logic   [0  : 0]    uart_tx,    // UART tx wire
-    input   logic   [0  : 0]    uart_rx     // UART rx wire
+    // TMR side
+    input   logic   [0  : 0]    tmr_in,     // TMR input
+    output  logic   [0  : 0]    tmr_out     // TMR output
 );
 
     logic   [0  : 0]    tr_req;
     logic   [0  : 0]    we_req;
-    logic   [0  : 0]    re_req;
     logic   [4  : 0]    addr;
     logic   [0  : 0]    we;
-    logic   [0  : 0]    re;
     logic   [31 : 0]    wd;
     logic   [31 : 0]    rd;
 
     assign hresp = '0;
     assign tr_req = hsel && (htrans != '0);
-    assign we_req = tr_req &&   hwrite;
-    assign re_req = tr_req && ! hwrite;
+    assign we_req = tr_req && hwrite;
     assign wd = hwdata;
     assign hrdata = rd;
 
     reg_we  #( 5 )  addr_ff     ( hclk , hresetn , '1 , haddr  , addr   );
     reg_we  #( 1 )  we_ff       ( hclk , hresetn , '1 , we_req , we     );
-    reg_we  #( 1 )  re_ff       ( hclk , hresetn , '1 , re_req , re     );
     reg_we  #( 1 )  hready_ff   ( hclk , hresetn , '1 , tr_req , hready );
 
-    uart
-    uart_0
+    tmr
+    #(
+        .tmr_w      ( tmr_w     )
+    )
+    tmr_0
     (
         // clock and reset
         .clk        ( hclk      ),  // clock
         .rstn       ( hresetn   ),  // reset
         // bus side
         .addr       ( addr      ),  // address
-        .re         ( re        ),  // read enable
         .we         ( we        ),  // write enable
         .wd         ( wd        ),  // write data
         .rd         ( rd        ),  // read data
         // IRQ
         .irq        ( irq       ),  // interrupt request
-        // GPIO side
-        .uart_tx    ( uart_tx   ),  // UART tx wire
-        .uart_rx    ( uart_rx   )   // UART rx wire
+        // TMR side
+        .tmr_in     ( tmr_in    ),  // TMR input
+        .tmr_out    ( tmr_out   )   // TMR output
     );
 
-endmodule : uart_ahb
+endmodule : tmr_ahb

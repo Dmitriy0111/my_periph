@@ -4,7 +4,7 @@
 *  Data            :   2019.12.12
 *  Language        :   SystemVerilog
 *  Description     :   This is avalon GPIO module
-*  Copyright(c)    :   2018 - 2019 Vlasov D.V.
+*  Copyright(c)    :   2019 Vlasov D.V.
 */
 
 module gpio_avalon

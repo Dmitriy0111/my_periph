@@ -19,6 +19,8 @@ typedef enum logic [4 : 0]
     UART_IRQ_V  = 5'h10
 } uart_e;
 
+parameter   uart_irq_v_w = 4;
+
 typedef struct packed 
 {
     logic   [3 : 0]     un;     // unused

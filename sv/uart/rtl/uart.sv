@@ -58,19 +58,17 @@ module uart
     genvar              irq_i;
 
     // assign write enable signals
-    assign uart_cr_we  = we_find( we, addr, UART_CR    );
-    assign uart_tx_we  = we_find( we, addr, UART_TX_RX );
-    assign uart_rx_re  = we_find( re, addr, UART_TX_RX );
-    assign uart_dv_we  = we_find( we, addr, UART_DFR   );
-    assign irq_m_we    = we_find( we, addr, UART_IRQ_M );
-    assign irq_v_we_si = we_find( we, addr, UART_IRQ_V );
+    assign uart_cr_we  = we_find( we , addr , UART_CR    );
+    assign uart_tx_we  = we_find( we , addr , UART_TX_RX );
+    assign uart_rx_re  = we_find( re , addr , UART_TX_RX );
+    assign uart_dv_we  = we_find( we , addr , UART_DFR   );
+    assign irq_m_we    = we_find( we , addr , UART_IRQ_M );
+    assign irq_v_we_si = we_find( we , addr , UART_IRQ_V );
 
     assign tx_req = ! tx_fifo_emp;
     assign irq = | irq_v_out;
     
     assign irq_v_we_f = { 8 { irq_v_we_si } } | irq_v_we.rff;
-
-    assign irq_v_out.un = '0;
 
     assign irq_v_we.un = '0;
     assign irq_v_we.rff = ( cr_out.rx_full && irq_m.rff );
@@ -108,9 +106,13 @@ module uart
     reg_we  #(  8 )     irq_m_ff        ( clk , rstn , irq_m_we      , wd[7  : 0]        , irq_m              );
 
     generate
-        for( irq_i = 0 ; irq_i < 8 ; irq_i++ )
+        for( irq_i = 0 ; irq_i < uart_irq_v_w ; irq_i++ )
         begin : gen_irq_ff
             reg_we  #( 1 )  irq_ff  ( clk , rstn , irq_v_we_f[irq_i] , irq_v_in[irq_i] , irq_v_out[irq_i] );
+        end
+        for( irq_i = uart_irq_v_w ; irq_i < 8 ; irq_i++ )
+        begin : gen_irq_oth_ff
+            assign irq_v_out[irq_i] = '0;
         end
     endgenerate
 

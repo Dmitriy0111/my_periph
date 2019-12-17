@@ -1,14 +1,16 @@
 /*
-*  File            :   uart_apb.sv
+*  File            :   tmr_apb.sv
 *  Autor           :   Vlasov D.V.
-*  Data            :   2019.12.13
+*  Data            :   2019.12.17
 *  Language        :   SystemVerilog
-*  Description     :   This is apb UART module
+*  Description     :   This is apb TMR module
 *  Copyright(c)    :   2019 Vlasov D.V.
 */
 
-module uart_apb
-(
+module tmr_apb
+#(
+    parameter                   tmr_w = 8
+)(
     // clock and reset
     input   logic   [0  : 0]    pclk,       // apb clock
     input   logic   [0  : 0]    presetn,    // apb reset
@@ -23,42 +25,42 @@ module uart_apb
     output  logic   [0  : 0]    pslverr,    // apb slave error signal
     // IRQ
     output  logic   [0  : 0]    irq,        // interrupt request
-    // UART side
-    output  logic   [0  : 0]    uart_tx,    // UART tx wire
-    input   logic   [0  : 0]    uart_rx     // UART rx wire
+    // TMR side
+    input   logic   [0  : 0]    tmr_in,     // TMR input
+    output  logic   [0  : 0]    tmr_out     // TMR output
 );
 
     logic   [4  : 0]    addr;
     logic   [0  : 0]    we;
-    logic   [0  : 0]    re;
     logic   [31 : 0]    wd;
     logic   [31 : 0]    rd;
 
     assign pslverr = '0;
 
     assign addr = paddr;
-    assign we = psel &&   pwrite && penable;
-    assign re = psel && ! pwrite && penable;
+    assign we = psel && pwrite && penable;
     assign wd = pwdata;
     assign pready = penable;
 
-    uart
-    uart_0
+    tmr
+    #(
+        .tmr_w      ( tmr_w     )
+    )
+    tmr_0
     (
         // clock and reset
         .clk        ( pclk      ),  // clock
         .rstn       ( presetn   ),  // reset
         // bus side
         .addr       ( addr      ),  // address
-        .re         ( re        ),  // read enable
         .we         ( we        ),  // write enable
         .wd         ( wd        ),  // write data
         .rd         ( rd        ),  // read data
         // IRQ
         .irq        ( irq       ),  // interrupt request
-        // GPIO side
-        .uart_tx    ( uart_tx   ),  // UART tx wire
-        .uart_rx    ( uart_rx   )   // UART rx wire
+        // TMR side
+        .tmr_in     ( tmr_in    ),  // TMR input
+        .tmr_out    ( tmr_out   )   // TMR output
     );
 
-endmodule : uart_apb
+endmodule : tmr_apb

@@ -39,6 +39,8 @@ typedef struct packed
     logic   [0 : 0]     tx_fifo_full;
 } spi_sr_v;
 
+parameter   spi_irq_v_w = 2;
+
 typedef struct packed 
 {
     logic   [5 : 0]     res;
