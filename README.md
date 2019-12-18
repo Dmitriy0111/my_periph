@@ -19,3 +19,12 @@ Or download project from github site <a href="https://github.com/Dmitriy0111/my_
 *   **make sim_clean** is used for cleaning simulation result;
 *   **make sim_cmd** is used for starting simulation in command line (CMD) mode;
 *   **make sim_gui** is used for starting simulation in graphical user interface (GUI) mode;
+
+For setting current example change PERIPH variable in makefile.
+
+## Peripherial list:
+
+* GPIO module with avalon, ahb, apb wrappers.
+* TMR module with avalon, ahb, apb wrappers.
+* UART module with avalon, ahb, apb wrappers.
+* SPI module with avalon, ahb, apb wrappers.
