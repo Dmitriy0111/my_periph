@@ -8,6 +8,8 @@
 #
 
 vlog -sv ../sv/common/*.*v
+vlog -sv ../sv/mem/rtl/mem.*v
+vlog -sv ../sv/mem/rtl/mem_pkg.svh
 vlog -sv ../sv/dma/rtl/*.*v
 vlog -sv ../sv/dma/tb/*.*v
 

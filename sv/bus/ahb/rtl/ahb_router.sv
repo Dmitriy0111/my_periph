@@ -76,7 +76,6 @@ module ahb_router
     )
     ahb_mux_0
     (
-        // clock and reset
         .hsel_ff    ( hsel_ff       ),
         // slave side
         .hrdata_s   ( hrdata_s      ),

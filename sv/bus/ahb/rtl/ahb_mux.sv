@@ -11,7 +11,6 @@ module ahb_mux
 #(
     parameter                               slv_c = 4
 )(
-    // clock and reset
     input   logic   [slv_c-1 : 0]           hsel_ff,
     // slave side
     input   logic   [slv_c-1 : 0][31 : 0]   hrdata_s,

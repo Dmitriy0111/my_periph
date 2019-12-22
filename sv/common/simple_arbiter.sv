@@ -14,16 +14,22 @@ module simple_arbiter
     // clock and reset
     input   logic              [0  : 0]     clk,        // clock
     input   logic              [0  : 0]     rstn,       // reset
-    // bus side
+    // bus control
     input   logic   [m_w-1 : 0]             bus_req,    // bus request
     input   logic   [m_w-1 : 0]             bus_lock,   // bus lock
     output  logic   [m_w-1 : 0]             bus_grant,  // bus grant
-    input   logic   [m_w-1 : 0][31 : 0]     addr_m,     // write data
+    // bus master
+    input   logic   [m_w-1 : 0][31 : 0]     addr_m,     // address
+    output  logic   [m_w-1 : 0][31 : 0]     rd_m,       // read data
     input   logic   [m_w-1 : 0][31 : 0]     wd_m,       // write data
-    input   logic   [m_w-1 : 0][0  : 0]     we_m,       // write data
-    output  logic              [31 : 0]     addr_f,     // write data
+    input   logic   [m_w-1 : 0][0  : 0]     we_m,       // write enable
+    input   logic   [m_w-1 : 0][1  : 0]     size_m,     // size
+    // bus slave
+    output  logic              [31 : 0]     addr_f,     // address
+    input   logic              [31 : 0]     rd_f,       // read data
     output  logic              [31 : 0]     wd_f,       // write data
-    output  logic              [0  : 0]     we_f        // write data
+    output  logic              [0  : 0]     we_f,       // write enable
+    output  logic              [1  : 0]     size_f      // size
 );
 
     logic   [m_w-1 : 0]     mst_en;
@@ -31,9 +37,12 @@ module simple_arbiter
 
     assign addr_f = addr_m[mst_en];
     assign wd_f = wd_m[mst_en];
+    assign size_f = size_m[mst_en];
     assign we_f = we_m[mst_en];
+    assign rd_m[0] = rd_f;
+    assign rd_m[1] = rd_f;
 
-    always_ff @(posedge clk, negedge rstn)
+    always_ff @(posedge clk)
     begin
         if( ! rstn )
         begin

@@ -17,6 +17,13 @@ typedef enum logic [3 : 0]
     DMA_DST_ADR = 4'h8
 } dma_e;
 
+typedef enum logic [1 : 0]
+{
+    DMA_B   = 2'h0,
+    DMA_HW  = 2'h1,
+    DMA_W   = 2'h2
+} size_e;
+
 typedef struct packed
 {
     logic   [2 : 0]     cnt;        // transmit counter
