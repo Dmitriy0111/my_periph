@@ -3,7 +3,7 @@
 *  Autor           :   Vlasov D.V.
 *  Data            :   2019.12.06
 *  Language        :   SystemVerilog
-*  Description     :   This gpio testbench
+*  Description     :   This ahb router testbench
 *  Copyright(c)    :   2019 Vlasov D.V.
 */
 
@@ -15,7 +15,7 @@ module ahb_router_tb();
     parameter                       T = 10,
                                     start_del = 200,
                                     rst_delay = 7,
-                                    repeat_n = 200;
+                                    repeat_n = 2000;
 
     parameter                       slv_c = 4;
 
@@ -45,13 +45,13 @@ module ahb_router_tb();
     logic   [slv_c-1 : 0][0  : 0]   hready_s;   // ahb slave ready signal
     logic   [slv_c-1 : 0][0  : 0]   hsel_s;     // ahb slave select signal
 
-    logic   [31 : 0]                slv     [slv_c][65536];
+    logic                [31 : 0]   slv     [slv_c][65536];
 
     bit     [slv_c-1 : 0][31 : 0]   slv_m;
 
     integer                         addr_q  [$];
-    integer                         data_wq [$];
-    integer                         data_rq [$];
+    logic                [31 : 0]   data_wq [integer];
+    logic                [31 : 0]   data_rq [integer];
 
     assign haddr_am =   
                         { 
@@ -104,15 +104,17 @@ module ahb_router_tb();
 
     task write_data(logic [31 : 0] wr_addr, logic [31 : 0] wr_data);
         logic [31 : 0] wr_data_h;
+        logic [31 : 0] wr_addr_h;
         haddr = wr_addr;
         hwrite = '1;
         htrans = '1;
         @(posedge hclk);
         htrans = '0;
         wr_data_h = wr_data;
+        wr_addr_h = wr_addr;
         fork
             begin
-                data_wq.push_back(wr_data_h);
+                data_wq[wr_addr_h] = wr_data_h;
                 hwdata = wr_data_h;
             end
         join_none
@@ -129,7 +131,7 @@ module ahb_router_tb();
         fork
             begin
                 @(posedge hclk);
-                data_rq.push_back(hrdata);
+                data_rq[rd_addr_h] = hrdata;
                 $display("rd_addr = 0x%h, rd_data = 0x%h", rd_addr_h, hrdata );
             end
         join_none
@@ -161,6 +163,7 @@ module ahb_router_tb();
         htrans = '0;
         hsize = '0;
         hburst = '0;
+        hready_s = '1;
         repeat(repeat_n) 
         begin
             int wr_addr;
@@ -172,17 +175,15 @@ module ahb_router_tb();
             $display("wr_addr = 0x%h, wr_data = 0x%h", wr_addr, wr_data);
             write_data(wr_addr,wr_data);
         end
-        for(;addr_q.size != 0;)
-            read_data(addr_q.pop_front());
+        for( int i = 0 ; i < addr_q.size ; i++ )
+            read_data(addr_q[i]);
         repeat(20) @(posedge hclk);
-        for(;data_rq.size != 0;)
+        for(;addr_q.size != 0;)
         begin
-            integer data_r;
-            integer data_w;
-            data_r = data_rq.pop_front();
-            data_w = data_wq.pop_front();
-            if( data_r != data_w )
-                $display("Error wr_data = 0x%h, rd_data = 0x%h", data_w, data_r );
+            integer addr;
+            addr = addr_q.pop_front();
+            if( data_rq[addr] != data_wq[addr] )
+                $display("Error wr_data = 0x%h, rd_data = 0x%h", data_wq[addr], data_rq[addr] );
         end
         $stop;
     end
@@ -201,7 +202,6 @@ module ahb_router_tb();
                     if( hwrite_s[ahb_i] && hsel_s[ahb_i] && ( htrans_s[ahb_i] != '0 ) )
                     fork
                         begin
-
                             logic [31 : 0] haddr_s_h;
                             haddr_s_h = haddr_s[ahb_i];
                             @(posedge hclk);

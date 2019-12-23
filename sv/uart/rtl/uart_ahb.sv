@@ -16,13 +16,13 @@ module uart_ahb
     input   logic   [4  : 0]    haddr,      // ahb slave address
     output  logic   [31 : 0]    hrdata,     // ahb slave read data
     input   logic   [31 : 0]    hwdata,     // ahb slave write data
-    input   logic   [0  : 0]    hsel,       // ahb slave select signal
     input   logic   [0  : 0]    hwrite,     // ahb slave write signal
     input   logic   [1  : 0]    htrans,     // ahb slave transfer control signal
     input   logic   [2  : 0]    hsize,      // ahb slave size signal
     input   logic   [2  : 0]    hburst,     // ahb slave burst signal
     output  logic   [1  : 0]    hresp,      // ahb slave response signal
     output  logic   [0  : 0]    hready,     // ahb slave ready signal
+    input   logic   [0  : 0]    hsel,       // ahb slave select signal
     // IRQ
     output  logic   [0  : 0]    irq,        // interrupt request
     // UART side

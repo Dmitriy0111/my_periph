@@ -57,7 +57,7 @@ module ahb_router
 
     assign hsel_s = hsel;
 
-    reg_we  #( slv_c )  hsel_ff_ff  ( hclk , hresetn , '1 , hsel , hsel_ff );
+    reg_we  #( slv_c )  hsel_ff_ff  ( hclk , hresetn , hready , hsel , hsel_ff );
     // creating one ahb dec
     ahb_dec
     #(
