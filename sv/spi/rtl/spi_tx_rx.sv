@@ -73,6 +73,7 @@ module spi_tx_rx
             counter <= '0;
             tx_req_ack <= '0;
             sck_int <= '0;
+            spi_mosi <= '0;
         end
         else
             case( state )

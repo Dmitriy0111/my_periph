@@ -37,6 +37,7 @@ module uart_apb
     assign pslverr = '0;
 
     assign addr = paddr;
+    assign prdata = rd;
     assign we = psel &&   pwrite && penable;
     assign re = psel && ! pwrite && penable;
     assign wd = pwdata;

@@ -49,11 +49,11 @@ module spi_ahb
     assign re_req = tr_req && ! hwrite;
     assign wd = hwdata;
     assign hrdata = rd;
+    assign hready = '1;
 
-    reg_we  #( 5 )  addr_ff     ( hclk , hresetn , '1 , haddr  , addr   );
-    reg_we  #( 1 )  we_ff       ( hclk , hresetn , '1 , we_req , we     );
-    reg_we  #( 1 )  re_ff       ( hclk , hresetn , '1 , re_req , re     );
-    reg_we  #( 1 )  hready_ff   ( hclk , hresetn , '1 , tr_req , hready );
+    reg_we  #( 5 )  addr_ff     ( hclk , hresetn , '1 , haddr  , addr );
+    reg_we  #( 1 )  we_ff       ( hclk , hresetn , '1 , we_req , we   );
+    reg_we  #( 1 )  re_ff       ( hclk , hresetn , '1 , re_req , re   );
 
     spi
     #(

@@ -15,12 +15,15 @@ vlog -sv ../sv/spi/rtl/*.*v
 vlog -sv ../sv/bus/ahb/rtl/*.*v
 vlog -sv ../sv/bus/bridge/rtl/*.*v
 vlog -sv ../sv/bus/apb/rtl/*.*v
+vlog -sv ../sv/test_system/rtl/*.*v
 vlog -sv ../sv/test_system/tb/*.*v
 
 vsim -novopt work.ahb_apb_test_system_tb
 
 add wave -divider  "testbench signals"
 add wave -position insertpoint sim:/ahb_apb_test_system_tb/*
+add wave -divider  "dut signals"
+add wave -position insertpoint sim:/ahb_apb_test_system_tb/dut/*
 
 run -all
 

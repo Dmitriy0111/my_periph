@@ -40,4 +40,49 @@ typedef struct packed
     logic   [0 : 0]     tr_en;
 } uart_cr_v;
 
+typedef struct packed
+{
+    logic   [31 : 0]    addr;
+    logic   [31 : 0]    data;
+} uart_c_reg;
+
+typedef struct packed
+{
+    logic   [31 : 0]    addr;
+    uart_irq_v          data;
+} uart_irq_v_reg;
+
+typedef struct packed
+{
+    logic   [31 : 0]    addr;
+    uart_cr_v           data;
+} uart_cr_reg;
+
+typedef struct packed
+{
+    uart_cr_reg     cr_c;
+    uart_c_reg      tx_rx_c;
+    uart_c_reg      dfr_c;
+    uart_irq_v_reg  irq_m_c;
+    uart_irq_v_reg  irq_v_c;
+} uart_struct;
+
+function uart_struct new_uart(bit [31 : 0] base);
+    uart_struct new_uart_unit;
+
+    new_uart_unit.cr_c.addr    = base | UART_CR;
+    new_uart_unit.tx_rx_c.addr = base | UART_TX_RX;
+    new_uart_unit.dfr_c.addr   = base | UART_DFR;
+    new_uart_unit.irq_m_c.addr = base | UART_IRQ_M;
+    new_uart_unit.irq_v_c.addr = base | UART_IRQ_V;
+
+    new_uart_unit.cr_c.data    = '0;
+    new_uart_unit.tx_rx_c.data = '0;
+    new_uart_unit.dfr_c.data   = '0;
+    new_uart_unit.irq_m_c.data = '0;
+    new_uart_unit.irq_v_c.data = '0;
+    
+    return new_uart_unit;
+endfunction : new_uart
+
 `endif // SVH__UART

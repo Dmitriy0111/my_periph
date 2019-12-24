@@ -37,6 +37,7 @@ module gpio_apb
     logic   [31 : 0]    rd;
 
     assign addr = paddr;
+    assign prdata = rd;
     assign we = psel && pwrite && penable;
     assign wd = pwdata;
     assign pready = penable;
