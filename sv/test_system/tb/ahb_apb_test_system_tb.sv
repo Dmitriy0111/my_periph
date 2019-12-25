@@ -270,7 +270,7 @@ module ahb_apb_test_system_tb();
             ahb_write_data_st( h_gpio_0.gpo_c.addr , h_gpio_0.gpo_c.data );
         end
 
-        h_uart_0.dfr_c.data = 10;
+        h_uart_0.dfr_c.data = 40;
 
         h_uart_0.cr_c.data.rx_fifo_lvl = '0;
         h_uart_0.cr_c.data.tx_fifo_lvl = '0;
@@ -300,7 +300,7 @@ module ahb_apb_test_system_tb();
             ahb_write_data_st( p_gpio_0.gpo_c.addr , p_gpio_0.gpo_c.data );
         end
 
-        p_uart_0.dfr_c.data = 7;
+        p_uart_0.dfr_c.data = 22;
 
         p_uart_0.cr_c.data.rx_fifo_lvl = '0;
         p_uart_0.cr_c.data.tx_fifo_lvl = '0;
@@ -313,7 +313,7 @@ module ahb_apb_test_system_tb();
         for( int i = 0 ; i < msg.len() ; i ++ ) 
         begin
             p_uart_0.tx_rx_c.data = msg[i];
-            $info("New uart tx val = %c", p_uart_0.tx_rx_c.data);
+            $info("New uart tx val = %c (%h)", p_uart_0.tx_rx_c.data,p_uart_0.tx_rx_c.data);
             ahb_write_data_st( p_uart_0.tx_rx_c.addr , p_uart_0.tx_rx_c.data );
             for(;;)
             begin
@@ -348,6 +348,48 @@ module ahb_apb_test_system_tb();
         # start_del;
         # stop_test_val;
         $stop;
+    end
+    // uart_rec_ahb
+    initial
+    begin
+        logic   [7 : 0] rec_data;
+        # start_del;
+        forever
+        begin
+            @(negedge h_uart_tx);
+            repeat( h_uart_0.dfr_c.data ) @(posedge hclk);
+
+            repeat(8)
+            begin
+                repeat( h_uart_0.dfr_c.data >> 1 ) @(posedge hclk);
+                rec_data = { h_uart_tx , rec_data[7 : 1] }; 
+                repeat( h_uart_0.dfr_c.data >> 1 ) @(posedge hclk);
+            end
+
+            repeat( h_uart_0.dfr_c.data ) @(posedge hclk);
+            $display("h_uart_mon rec_data = %c (0x%h)", rec_data, rec_data);
+        end
+    end
+    // uart_rec_apb
+    initial
+    begin
+        logic   [7 : 0] rec_data;
+        # start_del;
+        forever
+        begin
+            @(negedge p_uart_tx);
+            rec_data = '0;
+            repeat( p_uart_0.dfr_c.data ) @(posedge pclk);
+
+            repeat(8)
+            begin
+                repeat( p_uart_0.dfr_c.data / 2 ) @(posedge pclk);
+                rec_data = { p_uart_tx , rec_data[7 : 1] }; 
+                repeat( p_uart_0.dfr_c.data / 2 ) @(posedge pclk);
+            end
+
+            $display("p_uart_mon rec_data = %c (0x%h)", rec_data, rec_data);
+        end
     end
 
 endmodule : ahb_apb_test_system_tb

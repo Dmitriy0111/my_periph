@@ -22,6 +22,7 @@ typedef struct packed
     logic   [0 : 0]     tmr_ex;     // tmr external clock select
     logic   [0 : 0]     tmr_ie;     // tmr interrupt enable
     logic   [0 : 0]     tmr_r;      // tmr reload
+    logic   [0 : 0]     tmr_en;
 } tmr_cr_v;
 
 typedef struct packed

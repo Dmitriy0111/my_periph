@@ -71,8 +71,13 @@ module tmr
             tmr_c <= '0;
         else
         begin
-            if( ( ! cr_out.tmr_ex ) || ( ( ! tmr_in_reg ) && tmr_in_sync && cr_out.tmr_ex ) )
-                tmr_c <= ( tmr_c == tmr_re ) && cr_out.tmr_r ? '0 : tmr_c + 1'b1;
+            if( cr_out.tmr_en )
+            begin
+                if( ( ! cr_out.tmr_ex ) || ( ( ! tmr_in_reg ) && tmr_in_sync && cr_out.tmr_ex ) )
+                    tmr_c <= ( tmr_c == tmr_re ) && cr_out.tmr_r ? '0 : tmr_c + 1'b1;
+            end
+            else
+                tmr_c <= '0;
         end
 
     sync    #( 2 , 1 ) sync_in      ( clk , rstn ,               tmr_in      , tmr_in_sync );
