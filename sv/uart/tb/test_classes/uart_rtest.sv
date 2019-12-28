@@ -12,9 +12,11 @@
 
 class uart_rtest extends dvv_test;
 
+    string                      if_name;
+
     sif_rgen                    r_gen;
-    sif_drv                     drv;
-    sif_mon                     mon;
+    dvv_drv     #(sif_trans)    drv;
+    dvv_mon     #(sif_trans)    mon;
     uart_mon                    u_mon;
 
     dvv_sock    #(sif_trans)    gen2drv_sock;
@@ -32,9 +34,21 @@ function uart_rtest::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task uart_rtest::build();
+    if( !dvv_res_db#(string)::get_res_db("test_if",if_name) )
+        $fatal();
+
+    if( if_name == "sif_if" )
+    begin
+        drv   = sif_drv ::create::create_obj("[ SIF    DRV ]", this);
+        mon   = sif_mon ::create::create_obj("[ SIF    MON ]", this);
+    end 
+    else if( if_name == "apb_if" )
+    begin
+        drv   = apb_drv ::create::create_obj("[ APB    DRV ]", this);
+        mon   = apb_mon ::create::create_obj("[ APB    MON ]", this);
+    end
+
     r_gen = sif_rgen::create::create_obj("[ RAND GEN ]", this);
-    drv   = sif_drv ::create::create_obj("[ SIF DRV  ]", this);
-    mon   = sif_mon ::create::create_obj("[ SIF MON  ]", this);
     u_mon = uart_mon::create::create_obj("[ UART MON ]", this);
 
     r_gen.build();

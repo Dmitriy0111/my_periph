@@ -19,7 +19,5 @@ interface simple_if
     logic   [0  : 0]    we;         // write enable
     logic   [31 : 0]    wd;         // write data
     logic   [31 : 0]    rd;         // read data
-    // IRQ
-    logic   [0  : 0]    irq;        // interrupt request
 
 endinterface : simple_if

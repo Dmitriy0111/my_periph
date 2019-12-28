@@ -10,13 +10,19 @@
 package uart_test_pkg;
 
     import dvv_vm_pkg::*;
-    `include "../../../dvv_vm/dvv_macro.svh"
+    //`include "../../../dvv_vm/dvv_macro.svh"
+    `include "D:/DM/work/my_periph/dvv_vm/dvv_macro.svh"
     `include "../../rtl/uart.svh"
 
     `include "sif_trans.sv"
+    
+    `include "apb_drv.sv"
+    `include "apb_mon.sv"
+    `include "apb_agt.sv"
 
     `include "sif_drv.sv"
     `include "sif_mon.sv"
+    `include "sif_agt.sv"
     `include "sif_gen.sv"
     `include "sif_rgen.sv"
     `include "sif_dgen.sv"

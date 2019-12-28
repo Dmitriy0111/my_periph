@@ -12,9 +12,10 @@
 
 class uart_dtest extends dvv_test;
 
+    string                      if_name;
+
     sif_dgen                    d_gen;
-    sif_drv                     drv;
-    sif_mon                     mon;
+    dvv_agt     #(sif_trans)    agt;
     uart_mon                    u_mon;
 
     dvv_sock    #(sif_trans)    gen2drv_sock;
@@ -32,14 +33,23 @@ function uart_dtest::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task uart_dtest::build();
+    if( !dvv_res_db#(string)::get_res_db("test_if",if_name) )
+        $fatal();
+
+    if( if_name == "simple_if" )
+    begin
+        agt = sif_agt ::create::create_obj("[ SIF AGT ]",this);
+    end 
+    else if( if_name == "apb_if" )
+    begin
+        agt = apb_agt ::create::create_obj("[ APB AGT ]",this);
+    end
+
     d_gen = sif_dgen::create::create_obj("[ DIRECT GEN ]", this);
-    drv   = sif_drv ::create::create_obj("[ SIF    DRV ]", this);
-    mon   = sif_mon ::create::create_obj("[ SIF    MON ]", this);
     u_mon = uart_mon::create::create_obj("[ UART   MON ]", this);
 
     d_gen.build();
-    drv.build();
-    mon.build();
+    agt.build();
     u_mon.build();
 
     gen2drv_sock = new();
@@ -48,15 +58,14 @@ task uart_dtest::build();
 endtask : build
 
 task uart_dtest::connect();
-    drv.item_sock.connect(gen2drv_sock);
+    agt.drv.item_sock.connect(gen2drv_sock);
     d_gen.item_sock.connect(gen2drv_sock);
 endtask : connect
 
 task uart_dtest::run();
     fork
         d_gen.run();
-        drv.run();
-        mon.run();
+        agt.run();
         u_mon.run();
     join_none
 endtask : run

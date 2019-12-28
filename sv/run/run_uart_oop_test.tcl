@@ -22,7 +22,7 @@ vsim -novopt work.uart_ctb
 add wave -divider  "testbench signals"
 add wave -position insertpoint sim:/uart_ctb/*
 add wave -divider  "dut signals"
-add wave -position insertpoint sim:/uart_ctb/dut/*
+add wave -position insertpoint sim:/uart_ctb/dut_gen/dut/*
 
 run -all
 
