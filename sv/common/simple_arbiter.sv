@@ -4,7 +4,7 @@
 *  Data            :   2019.12.19
 *  Language        :   SystemVerilog
 *  Description     :   This is simple arbiter module
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module simple_arbiter

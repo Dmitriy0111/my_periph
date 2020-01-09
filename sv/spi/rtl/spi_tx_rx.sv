@@ -4,7 +4,7 @@
 *  Data            :   2019.12.13
 *  Language        :   SystemVerilog
 *  Description     :   This is spi transmitter receiver module
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module spi_tx_rx

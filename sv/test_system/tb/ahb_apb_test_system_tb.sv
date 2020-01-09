@@ -4,7 +4,7 @@
 *  Data            :   2019.12.23
 *  Language        :   SystemVerilog
 *  Description     :   This ahb, apb system testbench
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 `include "../../gpio/rtl/gpio.svh"
@@ -118,12 +118,12 @@ module ahb_apb_test_system_tb();
     logic                    [gpio_w-1 : 0]     p_gpd;      // gpio direction
 
     gpio_struct     h_gpio_0 =  new_gpio( h_gpio_0_base );
-    uart_struct     h_uart_0 =  new_uart( h_uart_0_base );
+    uart_struct     h_uart_0 =  new_uart( h_uart_0_base , 0 );
     tmr_struct      h_tmr_0  =  new_tmr ( h_tmr_0_base  );
     spi_struct      h_spi_0  =  new_spi ( h_spi_0_base  );
     
     gpio_struct     p_gpio_0 =  new_gpio( p_gpio_0_base );
-    uart_struct     p_uart_0 =  new_uart( p_uart_0_base );
+    uart_struct     p_uart_0 =  new_uart( p_uart_0_base , 0 );
     tmr_struct      p_tmr_0  =  new_tmr ( p_tmr_0_base  );
     spi_struct      p_spi_0  =  new_spi ( p_spi_0_base  );
 

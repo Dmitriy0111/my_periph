@@ -4,7 +4,7 @@
 *  Data            :   2019.12.06
 *  Language        :   SystemVerilog
 *  Description     :   This is TMR constants
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 `ifndef SVH__TMR

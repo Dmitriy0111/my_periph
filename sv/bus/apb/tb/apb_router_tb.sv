@@ -4,7 +4,7 @@
 *  Data            :   2019.12.23
 *  Language        :   SystemVerilog
 *  Description     :   This apb router testbench
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module apb_router_tb();

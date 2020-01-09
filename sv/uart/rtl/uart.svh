@@ -4,7 +4,7 @@
 *  Data            :   2019.12.12
 *  Language        :   SystemVerilog
 *  Description     :   This is UART constants
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 `ifndef SVH__UART
@@ -67,14 +67,14 @@ typedef struct packed
     uart_irq_v_reg  irq_v_c;
 } uart_struct;
 
-function uart_struct new_uart(bit [31 : 0] base);
+function uart_struct new_uart(bit [31 : 0] base, bit [31 : 0] offset);
     uart_struct new_uart_unit;
 
-    new_uart_unit.cr_c.addr    = base | UART_CR;
-    new_uart_unit.tx_rx_c.addr = base | UART_TX_RX;
-    new_uart_unit.dfr_c.addr   = base | UART_DFR;
-    new_uart_unit.irq_m_c.addr = base | UART_IRQ_M;
-    new_uart_unit.irq_v_c.addr = base | UART_IRQ_V;
+    new_uart_unit.cr_c.addr    = base | ( UART_CR    >> offset );
+    new_uart_unit.tx_rx_c.addr = base | ( UART_TX_RX >> offset );
+    new_uart_unit.dfr_c.addr   = base | ( UART_DFR   >> offset );
+    new_uart_unit.irq_m_c.addr = base | ( UART_IRQ_M >> offset );
+    new_uart_unit.irq_v_c.addr = base | ( UART_IRQ_V >> offset );
 
     new_uart_unit.cr_c.data    = '0;
     new_uart_unit.tx_rx_c.data = '0;

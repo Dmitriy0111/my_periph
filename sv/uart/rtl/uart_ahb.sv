@@ -4,7 +4,7 @@
 *  Data            :   2019.12.13
 *  Language        :   SystemVerilog
 *  Description     :   This is ahb UART module
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module uart_ahb

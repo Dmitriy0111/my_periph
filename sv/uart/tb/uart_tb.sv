@@ -4,7 +4,7 @@
 *  Data            :   2019.12.10
 *  Language        :   SystemVerilog
 *  Description     :   This is testbench for uart module
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 `include "../rtl/uart.svh"

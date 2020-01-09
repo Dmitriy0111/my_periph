@@ -4,7 +4,7 @@
 *  Data            :   2019.04.24
 *  Language        :   SystemVerilog
 *  Description     :   This is sync chain
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module sync

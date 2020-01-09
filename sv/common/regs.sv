@@ -4,7 +4,7 @@
 *  Data            :   2019.04.24
 *  Language        :   SystemVerilog
 *  Description     :   This is file with registers modules
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 // simple register with reset and clock 

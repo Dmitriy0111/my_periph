@@ -4,7 +4,7 @@
 *  Data            :   2019.12.20
 *  Language        :   SystemVerilog
 *  Description     :   This is multiplexor module
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module simple_mux

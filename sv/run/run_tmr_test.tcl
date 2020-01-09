@@ -4,7 +4,7 @@
 # Data          :   2019.12.17
 # Language      :   tcl
 # Description   :   This is script for running simulation process
-# Copyright(c)  :   2019 Vlasov D.V.
+# Copyright(c)  :   2019 - 2020 Vlasov D.V.
 #
 
 vlog -sv ../sv/common/*.*v

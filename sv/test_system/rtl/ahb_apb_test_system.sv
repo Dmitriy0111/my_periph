@@ -4,7 +4,7 @@
 *  Data            :   2019.12.23
 *  Language        :   SystemVerilog
 *  Description     :   This ahb, apb test system
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module ahb_apb_test_system

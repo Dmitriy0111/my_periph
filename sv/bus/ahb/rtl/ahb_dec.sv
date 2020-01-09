@@ -4,7 +4,7 @@
 *  Data            :   2019.12.18
 *  Language        :   SystemVerilog
 *  Description     :   This is ahb decoder module
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module ahb_dec

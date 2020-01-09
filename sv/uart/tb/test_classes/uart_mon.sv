@@ -4,14 +4,13 @@
 *  Data            :   2019.12.26
 *  Language        :   SystemVerilog
 *  Description     :   This is uart interface monitor 
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 `ifndef UART_MON__SV
 `define UART_MON__SV
 
-class uart_mon extends dvv_mon #(sif_trans);
-
+class uart_mon extends dvv_mon #(ctrl_trans);
     `OBJ_BEGIN( uart_mon )
 
     virtual uart_if     vif;
@@ -36,7 +35,8 @@ endtask : wait_clk
 task uart_mon::build();
     if( !dvv_res_db#(virtual uart_if)::get_res_db("uif_0",vif) )
         $fatal();
-    $display("%s build complete", this.name);
+        
+    $display("%s build complete", this.fname);
 endtask : build
 
 task uart_mon::run();

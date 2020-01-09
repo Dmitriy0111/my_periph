@@ -4,7 +4,7 @@
 *  Data            :   2019.12.06
 *  Language        :   SystemVerilog
 *  Description     :   This ahb router testbench
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module ahb_router_tb();

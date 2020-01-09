@@ -1,18 +1,17 @@
 /*
-*  File            :   sif_dgen.sv
+*  File            :   tr_dgen.sv
 *  Autor           :   Vlasov D.V.
 *  Data            :   2019.12.26
 *  Language        :   SystemVerilog
-*  Description     :   This is simple interface direct generator 
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Description     :   This is transaction direct generator 
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
-`ifndef SIF_DGEN__SV
-`define SIF_DGEN__SV
+`ifndef TR_DGEN__SV
+`define TR_DGEN__SV
 
-class sif_dgen extends sif_gen;
-
-    `OBJ_BEGIN( sif_dgen )
+class tr_dgen extends tr_gen;
+    `OBJ_BEGIN( tr_dgen )
 
     string  msg = "Hello World!";
 
@@ -21,21 +20,22 @@ class sif_dgen extends sif_gen;
     extern task     build();
     extern task     run();
     
-endclass : sif_dgen
+endclass : tr_dgen
 
-function sif_dgen::new(string name = "", dvv_bc parent = null);
+function tr_dgen::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
 endfunction : new
 
-task sif_dgen::build();
-    item = sif_trans::create::create_obj("gen_item",this);
+task tr_dgen::build();
+    item = ctrl_trans::create::create_obj("[ GEN ITEM ]",this);
     item_sock = new();
     if( !dvv_res_db#(virtual clk_rst_if)::get_res_db("cr_if_0",vif) )
         $fatal();
-    $display("%s build complete", this.name);
+        
+    $display("%s build complete", this.fname);
 endtask : build
 
-task sif_dgen::run();
+task tr_dgen::run();
     @(posedge vif.rstn);
     item_sock.wait_sock();
     for(int i = 0 ; i < msg.len() ; i++ )
@@ -48,4 +48,4 @@ task sif_dgen::run();
     $stop;
 endtask : run
 
-`endif // SIF_DGEN__SV
+`endif // TR_DGEN__SV

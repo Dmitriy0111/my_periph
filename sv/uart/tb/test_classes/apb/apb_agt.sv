@@ -4,15 +4,17 @@
 *  Data            :   2019.12.26
 *  Language        :   SystemVerilog
 *  Description     :   This is apb interface monitor 
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 `ifndef APB_AGT__SV
 `define APB_AGT__SV
 
-class apb_agt extends dvv_agt #(sif_trans);
-
+class apb_agt extends dvv_agt;
     `OBJ_BEGIN( apb_agt )
+
+    apb_drv     drv;
+    apb_mon     mon;
 
     extern function new(string name = "", dvv_bc parent = null);
 
@@ -32,7 +34,7 @@ task apb_agt::build();
     drv.build();
     mon.build();
 
-    $display("%s build complete", this.name);
+    $display("%s build complete", this.fname);
 endtask : build
 
 task apb_agt::run();

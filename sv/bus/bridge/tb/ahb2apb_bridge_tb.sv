@@ -4,7 +4,7 @@
 *  Data            :   2019.12.23
 *  Language        :   SystemVerilog
 *  Description     :   This ahb to apb bridge testbench
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 module ahb2apb_bridge_tb();

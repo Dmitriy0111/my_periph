@@ -1,18 +1,17 @@
 /*
-*  File            :   sif_trans.sv
+*  File            :   ctrl_trans.sv
 *  Autor           :   Vlasov D.V.
 *  Data            :   2019.12.26
 *  Language        :   SystemVerilog
-*  Description     :   This is simple interface transaction 
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Description     :   This is control transaction 
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
-`ifndef SIF_TRANS__SV
-`define SIF_TRANS__SV
+`ifndef CTRL_TRANS__SV
+`define CTRL_TRANS__SV
 
-class sif_trans extends dvv_bc;
-
-    `OBJ_BEGIN( sif_trans )
+class ctrl_trans extends dvv_bc;
+    `OBJ_BEGIN( ctrl_trans )
 
     rand    logic   [7  : 0]    data;
     rand    logic   [15 : 0]    freq;
@@ -31,16 +30,16 @@ class sif_trans extends dvv_bc;
 
     extern task     make_tr();
     
-endclass : sif_trans
+endclass : ctrl_trans
 
-function sif_trans::new(string name = "", dvv_bc parent = null);
+function ctrl_trans::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
 endfunction : new
 
-task sif_trans::make_tr();
+task ctrl_trans::make_tr();
     if( !this.randomize() )
         $fatal("Randomization error!");
     tr_num ++;
 endtask : make_tr
 
-`endif // SIF_TRANS__SV
+`endif // CTRL_TRANS__SV

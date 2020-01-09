@@ -4,7 +4,7 @@
 *  Data            :   2019.12.21
 *  Language        :   SystemVerilog
 *  Description     :   This is memory module
-*  Copyright(c)    :   2019 Vlasov D.V.
+*  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
 package mem_pkg;
