@@ -36,7 +36,7 @@ function sif_drv::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task sif_drv::build();
-    if( !dvv_res_db#(virtual simple_if)::get_res_db("sif_0",vif) )
+    if( !dvv_res_db#(virtual simple_if)::get_res_db("sif_if_0",vif) )
         $fatal();
 
     mth = sif_mth::create::create_obj("[ SIF DRV MTH ]", this);

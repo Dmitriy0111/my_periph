@@ -22,6 +22,8 @@ class uart_rtest extends uart_test;
     extern task     build();
     extern task     connect();
     extern task     run();
+
+    extern task     test_start();
     
 endclass : uart_rtest
 
@@ -34,7 +36,7 @@ task uart_rtest::build();
         $fatal();
 
     case( if_name )
-        "simple_if" : env = sif_env::create::create_obj("[ SIF ENV ]", this);
+        "sif_if"    : env = sif_env::create::create_obj("[ SIF ENV ]", this);
         "apb_if"    : env = apb_env::create::create_obj("[ APB ENV ]", this);
         "ahb_if"    : env = ahb_env::create::create_obj("[ AHB ENV ]", this);
         "avalon_if" : env = avalon_env::create::create_obj("[ AVALON ENV ]", this);
@@ -55,5 +57,19 @@ task uart_rtest::run();
         env.run();
     join_none
 endtask : run
+
+task uart_rtest::test_start();
+    $display("%s build phase start.", this.fname);
+    this.build();
+    $display("%s build phase complete.", this.fname);
+
+    $display("%s connect phase start.", this.fname);
+    this.connect();
+    $display("%s connect phase complete.", this.fname);
+
+    $display("%s run phase start.", this.fname);
+    this.run();
+    $display("%s run phase complete.", this.fname);
+endtask : test_start
 
 `endif // UART_RTEST__SV

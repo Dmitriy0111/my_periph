@@ -28,6 +28,8 @@ class ctrl_trans extends dvv_bc;
 
     extern function new(string name = "", dvv_bc parent = null);
 
+    extern task     print();
+
     extern task     make_tr();
     
 endclass : ctrl_trans
@@ -35,6 +37,10 @@ endclass : ctrl_trans
 function ctrl_trans::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
 endfunction : new
+
+task ctrl_trans::print();
+    $display("data = %c (%h)", data, data);
+endtask : print
 
 task ctrl_trans::make_tr();
     if( !this.randomize() )

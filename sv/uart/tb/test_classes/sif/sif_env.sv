@@ -15,6 +15,7 @@ class sif_env extends dvv_env;
 
     dvv_gen     #(ctrl_trans)   gen;
     sif_agt                     agt;
+    sif_cov                     cov;
     uart_mon                    u_mon;
 
     dvv_sock    #(ctrl_trans)   gen2drv_sock;
@@ -37,7 +38,8 @@ task sif_env::build();
     if( !dvv_res_db#(string)::get_res_db("test_type",test_type) )
         $fatal();
 
-    agt = sif_agt ::create::create_obj("[ SIF AGT ]",this);
+    agt = sif_agt ::create::create_obj("[ SIF AGT ]", this);
+    cov = sif_cov ::create::create_obj("[ SIF COV ]", this);
 
     if( test_type == "direct_test" )
     begin
@@ -64,6 +66,8 @@ endtask : build
 task sif_env::connect();
     agt.drv.item_sock.connect(gen2drv_sock);
     gen.item_sock.connect(gen2drv_sock);
+
+    agt.mon.cov_aep.connect(cov.item_ap);
 endtask : connect
 
 task sif_env::run();

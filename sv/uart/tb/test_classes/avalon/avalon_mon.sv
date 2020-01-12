@@ -47,7 +47,7 @@ task avalon_mon::run();
         begin
             $display("WRITE_TR addr = 0x%h, data = 0x%h", mth.get_address(), mth.get_writedata());
         end
-        else if( mth.read_detect() )
+        if( mth.read_detect() )
         begin
             fork
                 mth.wait_clk();

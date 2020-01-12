@@ -13,10 +13,13 @@
 class uart_test extends dvv_test;
     `OBJ_BEGIN( uart_test )
 
-    extern function new(string name = "", dvv_bc parent = null);
+    extern         function new(string name = "", dvv_bc parent = null);
 
-    extern task     build();
-    extern task     run();
+    extern virtual task     build();
+    extern virtual task     connect();
+    extern virtual task     run();
+
+    extern virtual task     test_start();
     
 endclass : uart_test
 
@@ -27,7 +30,13 @@ endfunction : new
 task uart_test::build();
 endtask : build
 
+task uart_test::connect();
+endtask : connect
+
 task uart_test::run();
 endtask : run
+
+task uart_test::test_start();
+endtask : test_start
 
 `endif // UART_TEST__SV

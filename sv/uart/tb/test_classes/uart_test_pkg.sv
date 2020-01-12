@@ -19,6 +19,7 @@ package uart_test_pkg;
     `include "sif/sif_mth.sv"
     `include "sif/sif_drv.sv"
     `include "sif/sif_mon.sv"
+    `include "sif/sif_cov.sv"
     `include "sif/sif_agt.sv"
 
     `include "apb/apb_mth.sv"

@@ -8,41 +8,9 @@
 */
 
 `include "../rtl/uart.svh"
+`include "uart_ctb.svh"
 import uart_test_pkg::*;
 import dvv_vm_pkg::*;
-
-`define apb_con( apb_if_name    ) \
-                .paddr      ( apb_if_name.paddr     ),  // apb address \
-                .prdata     ( apb_if_name.prdata    ),  // apb read data \
-                .pwdata     ( apb_if_name.pwdata    ),  // apb write data \
-                .psel       ( apb_if_name.psel      ),  // apb select signal \
-                .penable    ( apb_if_name.penable   ),  // apb enable signal \
-                .pwrite     ( apb_if_name.pwrite    ),  // apb write signal \
-                .pready     ( apb_if_name.pready    ),  // apb ready signal \
-                .pslverr    ( apb_if_name.pslverr   )   // apb error signal
-`define ahb_con( simple_if_name ) \
-                .haddr      ( simple_if_name.haddr  ), // ahb address \
-                .hrdata     ( simple_if_name.hrdata ), // ahb read data \
-                .hwdata     ( simple_if_name.hwdata ), // ahb write data \
-                .hwrite     ( simple_if_name.hwrite ), // ahb write signal \
-                .htrans     ( simple_if_name.htrans ), // ahb transfer control signal \
-                .hsize      ( simple_if_name.hsize  ), // ahb size signal \
-                .hburst     ( simple_if_name.hburst ), // ahb burst signal \
-                .hresp      ( simple_if_name.hresp  ), // ahb response signal \
-                .hready     ( simple_if_name.hready ), // ahb ready signal \
-                .hsel       ( simple_if_name.hsel   )  // ahb select signal
-`define sif_con( simple_if_name ) \
-                .addr       ( simple_if_name.addr   ), // address \
-                .re         ( simple_if_name.re     ), // read enable \
-                .we         ( simple_if_name.we     ), // write enable \
-                .wd         ( simple_if_name.wd     ), // write data \
-                .rd         ( simple_if_name.rd     )  // read data
-`define avalon_con( avalon_if_name ) \
-                .address    ( avalon_if_name.address    ), // avalon address \
-                .readdata   ( avalon_if_name.readdata   ), // avalon read data \
-                .writedata  ( avalon_if_name.writedata  ), // avalon write data \
-                .write      ( avalon_if_name.write      ), // avalon write signal \
-                .chipselect ( avalon_if_name.chipselect )  // avalon chip select signal
 
 module uart_ctb();
 
@@ -53,7 +21,7 @@ module uart_ctb();
                         start_del = 200,
                         rst_delay = 7,
                         repeat_n = 10,
-                        if_name = "apb_if",
+                        if_name = "sif_if",
                         test_type = "direct_test";
 
     // reset and clock
@@ -63,7 +31,7 @@ module uart_ctb();
     uart_test           test;
 
     simple_if
-    sif_0
+    sif_if_0
     (
         .clk        ( clk           ),
         .rstn       ( rstn          )
@@ -112,75 +80,15 @@ module uart_ctb();
     );
 
     assign uart_rx = '0;
+
     generate
-        if( if_name == "simple_if" )
-        begin : dut_gen
-            uart
-            dut
-            (
-                // reset and clock
-                .clk        ( clk           ),  // clk
-                .rstn       ( rstn          ),  // reset
-                // simple interface
-                `sif_con    ( sif_0         ),
-                // IRQ
-                .irq        ( irq_if_0.irq  ),  // interrupt request
-                // uart side
-                .uart_tx    ( uif_0.uart_tx ),  // UART tx wire
-                .uart_rx    ( uif_0.uart_rx )   // UART rx wire
-            );
-        end
-        else if( if_name == "apb_if" )
-        begin : dut_gen
-            uart_apb
-            dut
-            (
-                // clock and reset
-                .pclk       ( clk               ),  // apb clock
-                .presetn    ( rstn              ),  // apb reset
-                // bus side
-                `apb_con    ( apb_if_0          ),
-                // IRQ
-                .irq        ( irq_if_0.irq      ),  // interrupt request
-                // uart side
-                .uart_tx    ( uif_0.uart_tx     ),  // UART tx wire
-                .uart_rx    ( uif_0.uart_rx     )   // UART rx wire
-            );
-        end
-        else if( if_name == "ahb_if" )
-        begin : dut_gen
-            uart_ahb
-            dut
-            (
-                // clock and reset
-                .hclk       ( clk               ),  // clock
-                .hresetn    ( rstn              ),  // reset
-                // bus side
-                `ahb_con    ( ahb_if_0          ),
-                // IRQ
-                .irq        ( irq_if_0.irq      ),  // interrupt request
-                // uart side
-                .uart_tx    ( uif_0.uart_tx     ),  // UART tx wire
-                .uart_rx    ( uif_0.uart_rx     )   // UART rx wire
-            );
-        end
-        else if( if_name == "avalon_if" )
-        begin : dut_gen
-            uart_avalon
-            dut
-            (
-                // clock and reset
-                .clk        ( clk               ),  // clock
-                .rstn       ( rstn              ),  // reset
-                // bus side
-                `avalon_con ( avalon_if_0       ),
-                // IRQ
-                .irq        ( irq_if_0.irq      ),  // interrupt request
-                // uart side
-                .uart_tx    ( uif_0.uart_tx     ),  // UART tx wire
-                .uart_rx    ( uif_0.uart_rx     )   // UART rx wire
-            );
-        end
+        case( if_name )
+            "sif_if"    : begin : dut_gen `dut_sif_con      ( dut , clk , rstn , sif_if_0    , irq_if_0 , uif_0 ) end
+            "apb_if"    : begin : dut_gen `dut_apb_con      ( dut , clk , rstn , apb_if_0    , irq_if_0 , uif_0 ) end
+            "ahb_if"    : begin : dut_gen `dut_ahb_con      ( dut , clk , rstn , ahb_if_0    , irq_if_0 , uif_0 ) end
+            "avalon_if" : begin : dut_gen `dut_avalon_con   ( dut , clk , rstn , avalon_if_0 , irq_if_0 , uif_0 ) end
+            default     : $fatal("DUT doesn't created");
+        endcase
     endgenerate
     
     initial
@@ -188,7 +96,7 @@ module uart_ctb();
         # start_del;
         clk = '0;
         forever
-            #(T/2) clk <= !clk;
+            #(T/2) clk = ! clk;
     end
 
     initial
@@ -211,7 +119,7 @@ module uart_ctb();
             "apb_if"    : dvv_res_db#( virtual apb_if     )::set_res_db( "apb_if_0"    , apb_if_0    );
             "ahb_if"    : dvv_res_db#( virtual ahb_if     )::set_res_db( "ahb_if_0"    , ahb_if_0    );
             "avalon_if" : dvv_res_db#( virtual avalon_if  )::set_res_db( "avalon_if_0" , avalon_if_0 );
-            "simple_if" : dvv_res_db#( virtual simple_if  )::set_res_db( "sif_0"       , sif_0       );
+            "sif_if"    : dvv_res_db#( virtual simple_if  )::set_res_db( "sif_if_0"    , sif_if_0    );
         endcase
         
         dvv_res_db#(string)::set_res_db( "test_if"   , if_name   );
@@ -232,9 +140,7 @@ module uart_ctb();
             end
         endcase
 
-        test.build();
-        test.connect();
-        test.run();
+        test.test_start();
     end
 
 endmodule : uart_ctb

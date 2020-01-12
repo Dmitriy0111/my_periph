@@ -17,6 +17,10 @@ class sif_mon extends dvv_mon #(ctrl_trans);
 
     sif_mth             mth;
 
+    ctrl_trans          item;
+
+    dvv_aep #(ctrl_trans)   cov_aep;
+
     extern function new(string name = "", dvv_bc parent = null);
 
     extern task     build();
@@ -26,14 +30,17 @@ endclass : sif_mon
 
 function sif_mon::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
+    cov_aep = new();
 endfunction : new
 
 task sif_mon::build();
-    if( !dvv_res_db#(virtual simple_if)::get_res_db("sif_0",vif) )
+    if( !dvv_res_db#(virtual simple_if)::get_res_db("sif_if_0",vif) )
         $fatal();
 
     mth = sif_mth::create::create_obj("[ SIF MON MTH ]", this);
     mth.vif = vif;
+
+    item = ctrl_trans::create::create_obj("[ SIF ITEM ]", this);
         
     $display("%s build complete", this.fname);
 endtask : build
@@ -45,9 +52,11 @@ task sif_mon::run();
         #0;
         if( mth.get_we() )
         begin
+            item.data = mth.get_wd();
+            cov_aep.write(item);
             $display("WRITE_TR addr = 0x%h, data = 0x%h", mth.get_addr(), mth.get_wd());
         end
-        else if( mth.get_re() )
+        if( mth.get_re() )
         begin
             $display("READ_TR  addr = 0x%h, data = 0x%h", mth.get_addr(), mth.get_rd());
         end

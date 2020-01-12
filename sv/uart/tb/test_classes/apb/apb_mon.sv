@@ -47,7 +47,7 @@ task apb_mon::run();
         begin
             $display("WRITE_TR addr = 0x%h, data = 0x%h", mth.get_paddr(), mth.get_pwdata());
         end
-        else if( mth.write_detect() )
+        if( mth.write_detect() )
         begin
             $display("READ_TR  addr = 0x%h, data = 0x%h", mth.get_paddr(), mth.get_prdata());
         end
