@@ -21,7 +21,8 @@ show_pwd:
 	PWD
 
 clean: \
-	sim_clean
+	sim_clean \
+	log_clean
 
 sim_all: \
 	sim_cmd 
@@ -57,3 +58,6 @@ sim_cmd: sim_dir
 
 sim_gui: sim_dir
 	$(VSIM_BIN) $(VSIM_OPT_COMMON) $(VSIM_OPT_GUI) &
+
+log_clean:
+	rm -rfd .log

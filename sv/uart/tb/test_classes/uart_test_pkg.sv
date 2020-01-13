@@ -41,7 +41,8 @@ package uart_test_pkg;
     `include "tr_rgen.sv"
     `include "tr_dgen.sv"
     
-    `include "uart_mon.sv"
+    `include "uart/uart_mon.sv"
+    `include "uart/uart_drv.sv"
 
     `include "sif/sif_env.sv"
     `include "apb/apb_env.sv"

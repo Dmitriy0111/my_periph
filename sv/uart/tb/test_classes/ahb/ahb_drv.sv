@@ -13,12 +13,15 @@
 class ahb_drv extends dvv_drv #(ctrl_trans);
     `OBJ_BEGIN( ahb_drv )
 
-    virtual ahb_if      vif;
-    ahb_mth             mth;
+    virtual ahb_if              vif;
 
-    ctrl_trans          item;
+    ahb_mth                     mth;
 
-    uart_struct         h_uart = new_uart( 0 , 0 );
+    ctrl_trans                  item;
+
+    dvv_aep #(logic [15 : 0])   u_mon_aep;
+
+    uart_struct                 h_uart = new_uart( 0 , 0 );
 
     extern function new(string name = "", dvv_bc parent = null);
 
@@ -32,6 +35,7 @@ endclass : ahb_drv
 
 function ahb_drv::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
+    u_mon_aep = new();
 endfunction : new
 
 task ahb_drv::build();
@@ -88,21 +92,25 @@ endtask : read_reg
 task ahb_drv::run();
     mth.wait_reset();
 
-    h_uart.dfr_c.data = 40;
-
     h_uart.cr_c.data.rx_fifo_lvl = '0;
     h_uart.cr_c.data.tx_fifo_lvl = '0;
     h_uart.cr_c.data.rec_en      = '0;
     h_uart.cr_c.data.tr_en       = '1;
 
     write_reg(h_uart.cr_c.addr, h_uart.cr_c.data);
-    write_reg(h_uart.dfr_c.addr, h_uart.dfr_c.data);
 
     item_sock.trig_sock();
     forever
     begin
         item_sock.rec_msg(item);
+        
         h_uart.tx_rx_c.data = item.data;
+        h_uart.dfr_c.data = item.freq;
+
+        write_reg(h_uart.dfr_c.addr, h_uart.dfr_c.data);
+
+        u_mon_aep.write(h_uart.dfr_c.data);
+        
         write_reg(h_uart.tx_rx_c.addr, h_uart.tx_rx_c.data);
 
         for(;;)

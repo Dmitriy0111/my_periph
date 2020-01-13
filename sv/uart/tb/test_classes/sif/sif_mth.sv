@@ -13,7 +13,7 @@
 class sif_mth extends dvv_bc;
     `OBJ_BEGIN( sif_mth )
 
-    virtual simple_if   vif;
+    virtual simple_if   ctrl_vif;
 
     extern function new(string name = "", dvv_bc parent = null);
 
@@ -39,58 +39,58 @@ function sif_mth::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task                    sif_mth::set_addr(logic [31 : 0] val);
-    vif.addr = val;
+    ctrl_vif.addr = val;
 endtask : set_addr
 
 function logic [31 : 0] sif_mth::get_addr();
-    return vif.addr;
+    return ctrl_vif.addr;
 endfunction : get_addr
 
 task                    sif_mth::set_re(logic [0  : 0] val);
-    vif.re = val;
+    ctrl_vif.re = val;
 endtask : set_re
 
 function logic [0  : 0] sif_mth::get_re();
-    return vif.re;
+    return ctrl_vif.re;
 endfunction : get_re
 
 task                    sif_mth::set_we(logic [0  : 0] val);
-    vif.we = val;
+    ctrl_vif.we = val;
 endtask : set_we
 
 function logic [0  : 0] sif_mth::get_we();
-    return vif.we;
+    return ctrl_vif.we;
 endfunction : get_we
 
 task                    sif_mth::set_wd(logic [31 : 0] val);
-    vif.wd = val;
+    ctrl_vif.wd = val;
 endtask : set_wd
 
 function logic [31 : 0] sif_mth::get_wd();
-    return vif.wd;
+    return ctrl_vif.wd;
 endfunction : get_wd
 
 task                    sif_mth::set_rd(logic [31 : 0] val);
-    vif.rd = val;
+    ctrl_vif.rd = val;
 endtask : set_rd
 
 function logic [31 : 0] sif_mth::get_rd();
-    return vif.rd;
+    return ctrl_vif.rd;
 endfunction : get_rd
 
 task sif_mth::wait_clk();
-    @(posedge vif.clk);
+    @(posedge ctrl_vif.clk);
 endtask : wait_clk
 
 task sif_mth::wait_reset();
-    @(posedge vif.rstn);
+    @(posedge ctrl_vif.rstn);
 endtask : wait_reset
 
 task sif_mth::reset_signals();
-    vif.addr = '0;
-    vif.we = '0;
-    vif.re = '0;
-    vif.wd = '0;
+    ctrl_vif.addr = '0;
+    ctrl_vif.we = '0;
+    ctrl_vif.re = '0;
+    ctrl_vif.wd = '0;
 endtask : reset_signals
 
 `endif // SIF_MTH__SV

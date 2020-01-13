@@ -26,6 +26,8 @@ add wave -position insertpoint sim:/uart_ctb/dut_gen/dut/*
 
 run -all
 
+coverage report -detail -cvg -directive -config -comments -file sif_cov.log -noa /uart_test_pkg/sif_cov/sif_cg
+
 wave zoom full
 
 #quit

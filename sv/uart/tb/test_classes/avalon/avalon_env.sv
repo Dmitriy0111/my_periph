@@ -63,6 +63,8 @@ endtask : build
 task avalon_env::connect();
     agt.drv.item_sock.connect(gen2drv_sock);
     gen.item_sock.connect(gen2drv_sock);
+
+    agt.drv.u_mon_aep.connect(u_mon.mon_ap);
 endtask : connect
 
 task avalon_env::run();

@@ -13,7 +13,7 @@
 class sif_mon extends dvv_mon #(ctrl_trans);
     `OBJ_BEGIN( sif_mon )
 
-    virtual simple_if   vif;
+    virtual simple_if   ctrl_vif;
 
     sif_mth             mth;
 
@@ -34,11 +34,11 @@ function sif_mon::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task sif_mon::build();
-    if( !dvv_res_db#(virtual simple_if)::get_res_db("sif_if_0",vif) )
+    if( !dvv_res_db#(virtual simple_if)::get_res_db("sif_if_0",ctrl_vif) )
         $fatal();
 
     mth = sif_mth::create::create_obj("[ SIF MON MTH ]", this);
-    mth.vif = vif;
+    mth.ctrl_vif = ctrl_vif;
 
     item = ctrl_trans::create::create_obj("[ SIF ITEM ]", this);
         
@@ -52,12 +52,18 @@ task sif_mon::run();
         #0;
         if( mth.get_we() )
         begin
-            item.data = mth.get_wd();
+            item.set_data(mth.get_wd());
+            item.set_addr(mth.get_addr());
+            item.set_we_re(mth.get_we());
             cov_aep.write(item);
             $display("WRITE_TR addr = 0x%h, data = 0x%h", mth.get_addr(), mth.get_wd());
         end
         if( mth.get_re() )
         begin
+            item.set_data(mth.get_wd());
+            item.set_addr(mth.get_addr());
+            item.set_we_re(mth.get_re());
+            cov_aep.write(item);
             $display("READ_TR  addr = 0x%h, data = 0x%h", mth.get_addr(), mth.get_rd());
         end
     end
