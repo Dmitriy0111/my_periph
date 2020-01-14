@@ -26,11 +26,11 @@ class sif_drv extends dvv_drv #(ctrl_trans);
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);
-    extern task     read_reg(logic [31 : 0] r_addr, output logic [31 : 0] r_data);
+    extern task write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);
+    extern task read_reg(logic [31 : 0] r_addr, output logic [31 : 0] r_data);
 
-    extern task     build();
-    extern task     run();
+    extern task build();
+    extern task run();
     
 endclass : sif_drv
 
@@ -49,7 +49,8 @@ task sif_drv::build();
     mth = sif_mth::create::create_obj("[ SIF DRV MTH ]", this);
     mth.ctrl_vif = ctrl_vif;
 
-    item = ctrl_trans::create::create_obj("[ SIF ITEM ]", this);
+    item = ctrl_trans::create::create_obj("[ SIF DRV ITEM ]", this);
+
     item_sock = new();
 
     $display("%s build complete", this.fname);

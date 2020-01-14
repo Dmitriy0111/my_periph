@@ -19,8 +19,8 @@ class tr_gen extends dvv_gen #(ctrl_trans);
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     build();
-    extern task     run();
+    extern task build();
+    extern task run();
     
 endclass : tr_gen
 

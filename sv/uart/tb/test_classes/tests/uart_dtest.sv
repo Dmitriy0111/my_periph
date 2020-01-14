@@ -19,11 +19,11 @@ class uart_dtest extends uart_test;
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     build();
-    extern task     connect();
-    extern task     run();
+    extern task build();
+    extern task connect();
+    extern task run();
 
-    extern task     test_start();
+    extern task test_start();
     
 endclass : uart_dtest
 

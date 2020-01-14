@@ -21,14 +21,16 @@ class uart_drv extends dvv_drv #(ctrl_trans);
 
     virtual uart_if                     vif;
 
+    ctrl_trans                          item;
+
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     wait_clk();
+    extern task wait_clk();
 
-    extern task     build();
-    extern task     run();
+    extern task build();
+    extern task run();
 
-    extern task     drv_rx();
+    extern task drv_rx();
 
     extern function write(logic [15 : 0] item);
     
@@ -46,6 +48,10 @@ endtask : wait_clk
 task uart_drv::build();
     if( !dvv_res_db#(virtual uart_if)::get_res_db("uif_0",vif) )
         $fatal();
+
+    item = ctrl_trans::create::create_obj("[ UART DRV ITEM ]", this);
+
+    item_sock = new();
         
     $display("%s build complete", this.fname);
 endtask : build
@@ -58,10 +64,13 @@ endtask : run
 
 task uart_drv::drv_rx();
     logic   [7 : 0]     send_data;
-    wait('0);
     vif.uart_rx = '1;
     forever
     begin
+        item_sock.rec_msg(item);
+
+        send_data = item.data;
+
         vif.uart_rx = '0;
         repeat(this.dfr) this.wait_clk();
 

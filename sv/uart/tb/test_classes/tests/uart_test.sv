@@ -13,13 +13,13 @@
 class uart_test extends dvv_test;
     `OBJ_BEGIN( uart_test )
 
-    extern         function new(string name = "", dvv_bc parent = null);
+    extern function new(string name = "", dvv_bc parent = null);
 
-    extern virtual task     build();
-    extern virtual task     connect();
-    extern virtual task     run();
+    extern virtual task build();
+    extern virtual task connect();
+    extern virtual task run();
 
-    extern virtual task     test_start();
+    extern virtual task test_start();
     
 endclass : uart_test
 

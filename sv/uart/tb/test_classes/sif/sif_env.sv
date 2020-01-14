@@ -16,8 +16,7 @@ class sif_env extends dvv_env;
     dvv_gen     #(ctrl_trans)   gen;
     sif_agt                     agt;
     sif_cov                     cov;
-    uart_mon                    u_mon;
-    uart_drv                    u_drv;
+    uart_agt                    u_agt;
 
     dvv_sock    #(ctrl_trans)   gen2drv_sock;
 
@@ -25,9 +24,9 @@ class sif_env extends dvv_env;
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     build();
-    extern task     run();
-    extern task     connect();
+    extern task build();
+    extern task connect();
+    extern task run();
     
 endclass : sif_env
 
@@ -51,13 +50,11 @@ task sif_env::build();
         gen = tr_rgen ::create::create_obj("[ RANDOM GEN ]", this);
     end
 
-    u_mon = uart_mon::create::create_obj("[ UART MON ]", this);
-    u_drv = uart_drv::create::create_obj("[ UART DRV ]", this);
+    u_agt = uart_agt::create::create_obj("[ UART AGT ]", this);
     
     gen.build();
     agt.build();
-    u_mon.build();
-    u_drv.build();
+    u_agt.build();
 
     gen2drv_sock = new();
     if( gen2drv_sock == null )
@@ -71,15 +68,15 @@ task sif_env::connect();
     gen.item_sock.connect(gen2drv_sock);
     
     agt.mon.cov_aep.connect(cov.item_ap);
-    agt.drv.u_mon_aep.connect(u_mon.mon_ap);
-    agt.drv.u_mon_aep.connect(u_drv.drv_ap);
+    agt.drv.u_mon_aep.connect(u_agt.mon.mon_ap);
+    agt.drv.u_mon_aep.connect(u_agt.drv.drv_ap);
 endtask : connect
 
 task sif_env::run();
     fork
         gen.run();
         agt.run();
-        u_mon.run();
+        u_agt.run();
     join_none
 endtask : run
 

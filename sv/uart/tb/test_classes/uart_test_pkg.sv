@@ -43,6 +43,7 @@ package uart_test_pkg;
     
     `include "uart/uart_mon.sv"
     `include "uart/uart_drv.sv"
+    `include "uart/uart_agt.sv"
 
     `include "sif/sif_env.sv"
     `include "apb/apb_env.sv"

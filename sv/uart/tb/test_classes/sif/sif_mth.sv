@@ -17,20 +17,21 @@ class sif_mth extends dvv_bc;
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task                    set_addr(logic [31 : 0] val);
+    extern task set_addr(logic [31 : 0] val);
+    extern task set_re(logic [0  : 0] val);
+    extern task set_we(logic [0  : 0] val);
+    extern task set_wd(logic [31 : 0] val);
+    extern task set_rd(logic [31 : 0] val);
+
     extern function logic [31 : 0] get_addr();
-    extern task                    set_re(logic [0  : 0] val);
     extern function logic [0  : 0] get_re();
-    extern task                    set_we(logic [0  : 0] val);
     extern function logic [0  : 0] get_we();
-    extern task                    set_wd(logic [31 : 0] val);
     extern function logic [31 : 0] get_wd();
-    extern task                    set_rd(logic [31 : 0] val);
     extern function logic [31 : 0] get_rd();
 
-    extern task                    wait_clk();
-    extern task                    wait_reset();
-    extern task                    reset_signals();
+    extern task wait_clk();
+    extern task wait_reset();
+    extern task reset_signals();
     
 endclass : sif_mth
 
@@ -38,41 +39,41 @@ function sif_mth::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
 endfunction : new
 
-task                    sif_mth::set_addr(logic [31 : 0] val);
+task sif_mth::set_addr(logic [31 : 0] val);
     ctrl_vif.addr = val;
 endtask : set_addr
+
+task sif_mth::set_re(logic [0  : 0] val);
+    ctrl_vif.re = val;
+endtask : set_re
+
+task sif_mth::set_we(logic [0  : 0] val);
+    ctrl_vif.we = val;
+endtask : set_we
+
+task sif_mth::set_wd(logic [31 : 0] val);
+    ctrl_vif.wd = val;
+endtask : set_wd
+
+task sif_mth::set_rd(logic [31 : 0] val);
+    ctrl_vif.rd = val;
+endtask : set_rd
 
 function logic [31 : 0] sif_mth::get_addr();
     return ctrl_vif.addr;
 endfunction : get_addr
 
-task                    sif_mth::set_re(logic [0  : 0] val);
-    ctrl_vif.re = val;
-endtask : set_re
-
 function logic [0  : 0] sif_mth::get_re();
     return ctrl_vif.re;
 endfunction : get_re
-
-task                    sif_mth::set_we(logic [0  : 0] val);
-    ctrl_vif.we = val;
-endtask : set_we
 
 function logic [0  : 0] sif_mth::get_we();
     return ctrl_vif.we;
 endfunction : get_we
 
-task                    sif_mth::set_wd(logic [31 : 0] val);
-    ctrl_vif.wd = val;
-endtask : set_wd
-
 function logic [31 : 0] sif_mth::get_wd();
     return ctrl_vif.wd;
 endfunction : get_wd
-
-task                    sif_mth::set_rd(logic [31 : 0] val);
-    ctrl_vif.rd = val;
-endtask : set_rd
 
 function logic [31 : 0] sif_mth::get_rd();
     return ctrl_vif.rd;

@@ -23,8 +23,8 @@ class sif_mon extends dvv_mon #(ctrl_trans);
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     build();
-    extern task     run();
+    extern task build();
+    extern task run();
     
 endclass : sif_mon
 

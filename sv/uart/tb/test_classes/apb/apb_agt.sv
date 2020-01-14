@@ -18,8 +18,8 @@ class apb_agt extends dvv_agt;
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     build();
-    extern task     run();
+    extern task build();
+    extern task run();
     
 endclass : apb_agt
 

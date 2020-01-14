@@ -25,11 +25,11 @@ class ahb_drv extends dvv_drv #(ctrl_trans);
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);
-    extern task     read_reg(logic [31 : 0] r_addr, output logic [31 : 0] r_data);
+    extern task write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);
+    extern task read_reg(logic [31 : 0] r_addr, output logic [31 : 0] r_data);
 
-    extern task     build();
-    extern task     run();
+    extern task build();
+    extern task run();
     
 endclass : ahb_drv
 

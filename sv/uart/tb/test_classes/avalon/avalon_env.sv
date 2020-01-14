@@ -23,9 +23,9 @@ class avalon_env extends dvv_env;
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     build();
-    extern task     run();
-    extern task     connect();
+    extern task build();
+    extern task connect();
+    extern task run();
     
 endclass : avalon_env
 

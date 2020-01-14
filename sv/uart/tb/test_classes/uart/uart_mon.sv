@@ -53,8 +53,8 @@ endtask : build
 
 task uart_mon::run();
     fork
-        mon_tx();
         mon_rx();
+        mon_tx();
     join_none
 endtask : run
 
