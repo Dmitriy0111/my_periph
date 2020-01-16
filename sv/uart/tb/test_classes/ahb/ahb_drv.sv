@@ -105,7 +105,7 @@ task ahb_drv::run();
         item_sock.rec_msg(item);
         
         h_uart.tx_rx_c.data = item.data;
-        h_uart.dfr_c.data = item.freq;
+        h_uart.dfr_c.data = 40;
 
         write_reg(h_uart.dfr_c.addr, h_uart.dfr_c.data);
 

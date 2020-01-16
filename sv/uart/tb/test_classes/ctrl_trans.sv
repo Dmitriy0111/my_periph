@@ -14,18 +14,17 @@ class ctrl_trans extends dvv_bc;
     `OBJ_BEGIN( ctrl_trans )
 
     rand    logic   [31 : 0]    data;
-    rand    logic   [15 : 0]    freq;
             logic   [31 : 0]    addr;
             logic   [0  : 0]    we_re;
 
     int     tr_num = 0;
 
-    constraint freq_c {
-        freq inside { [40 : 200] };
+    constraint data_tr_c {
+        data inside { [0 : 2**8-1] };
     }
 
-    constraint data_c {
-        data inside { [0 : 2**8-1] };
+    constraint data_freq_c {
+        data inside { 40, 50, 60, 70, 100 };
     }
 
     extern function new(string name = "", dvv_bc parent = null);
@@ -35,12 +34,10 @@ class ctrl_trans extends dvv_bc;
     extern task set_we_re(logic [0 : 0] we_re);
     extern task set_data(logic [31 : 0] data);
     extern task set_addr(logic [31 : 0] addr);
-    extern task set_freq(logic [15 : 0] freq);
 
     extern function logic [0  : 0] get_we_re();
     extern function logic [31 : 0] get_data();
     extern function logic [31 : 0] get_addr();
-    extern function logic [15 : 0] get_freq();
 
     extern task make_tr();
     
@@ -51,7 +48,9 @@ function ctrl_trans::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task ctrl_trans::print();
-    $display("data = %c (%h)", data, data);
+    $display("data  : 0x%h", data);
+    $display("addr  : 0x%h", addr);
+    $display("we_re : %s", ( we_re ? "WRITE" : "READ ") );
 endtask : print
 
 task ctrl_trans::set_we_re(logic [0 : 0] we_re);
@@ -66,10 +65,6 @@ task ctrl_trans::set_addr(logic [31 : 0] addr);
     this.addr = addr;
 endtask : set_addr
 
-task ctrl_trans::set_freq(logic [15 : 0] freq);
-    this.freq = freq;
-endtask : set_freq
-
 function logic [0  : 0] ctrl_trans::get_we_re();
     return this.we_re;
 endfunction : get_we_re
@@ -81,10 +76,6 @@ endfunction : get_data
 function logic [31 : 0] ctrl_trans::get_addr();
     return this.addr;
 endfunction : get_addr
-
-function logic [15 : 0] ctrl_trans::get_freq();
-    return this.freq;
-endfunction : get_freq
 
 task ctrl_trans::make_tr();
     if( !this.randomize() )

@@ -20,7 +20,7 @@ module uart_ctb();
     parameter           T = 10,
                         start_del = 200,
                         rst_delay = 7,
-                        repeat_n = 10,
+                        repeat_n = 40,
                         if_name = "sif_if",
                         test_type = "direct_test";
 

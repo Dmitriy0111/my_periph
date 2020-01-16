@@ -23,15 +23,15 @@ class uart_mon extends dvv_mon #(ctrl_trans);
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task     wait_clk();
+    extern task wait_clk();
 
-    extern task     build();
-    extern task     run();
+    extern task build();
+    extern task run();
 
-    extern task     mon_tx();
-    extern task     mon_rx();
+    extern task mon_tx();
+    extern task mon_rx();
 
-    extern function write(logic [15 : 0] item);
+    extern function void write(logic [15 : 0] item);
     
 endclass : uart_mon
 
@@ -92,7 +92,7 @@ task uart_mon::mon_rx();
     end
 endtask : mon_rx
 
-function uart_mon::write(logic [15 : 0] item);
+function void uart_mon::write(logic [15 : 0] item);
     this.dfr = item;
 endfunction : write
 

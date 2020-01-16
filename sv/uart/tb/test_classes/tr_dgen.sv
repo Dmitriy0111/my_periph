@@ -13,7 +13,12 @@
 class tr_dgen extends tr_gen;
     `OBJ_BEGIN( tr_dgen )
 
-    int     fp;
+    int                     fp;
+    string                  msg = "Hello World!";
+
+    bit         [31 : 0]    addr;
+    bit         [31 : 0]    data;
+    string                  cmd;
 
     extern function new(string name = "", dvv_bc parent = null);
 
@@ -24,11 +29,14 @@ endclass : tr_dgen
 
 function tr_dgen::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
+    u_agt_aep = new();
 endfunction : new
 
 task tr_dgen::build();
     item = ctrl_trans::create::create_obj("[ GEN ITEM ]",this);
+
     item_sock = new();
+    resp_sock = new();
 
     if( !dvv_res_db#(virtual clk_rst_if)::get_res_db("cr_if_0",vif) )
         $fatal();
@@ -42,14 +50,45 @@ endtask : build
 
 task tr_dgen::run();
     @(posedge vif.rstn);
+
+    item.set_addr( 32'h0 );
+    item.set_data( 32'h01 );
+    item.set_we_re( '1 );
+    item.tr_num++;
+    item_sock.send_msg(item);
     item_sock.wait_sock();
 
-    for(;( $feof(fp) == '0 );)
+    item.set_addr( 32'h8 );
+    item.set_data( 32'h28 );
+    item.set_we_re( '1 );
+    item.tr_num++;
+    item_sock.send_msg(item);
+    item_sock.wait_sock();
+
+    for(; !$feof(fp) ;)
     begin
-        item.tr_num++;
-        $fscanf(fp, "%h %d", item.data, item.freq);
-        item_sock.send_msg(item);
-        item_sock.wait_sock();
+        $fscanf(fp,"%s %h %h", cmd, addr, data);
+        item.set_addr(addr);
+        item.set_data(data);
+        item.set_we_re( ( cmd == "WR" ? '1 : '0 ) );
+        if( cmd == "WR" )
+        begin
+            item_sock.send_msg(item);
+            item_sock.wait_sock();
+        end
+        else
+        begin
+            for(;;)
+            begin
+                item_sock.send_msg(item);
+                fork
+                    resp_sock.rec_msg(item);
+                    item_sock.wait_sock();
+                join
+                if( ! ( item.get_data() & 32'h4 ) )
+                break;
+            end
+        end
     end
     $stop;
 endtask : run

@@ -32,7 +32,7 @@ class uart_drv extends dvv_drv #(ctrl_trans);
 
     extern task drv_rx();
 
-    extern function write(logic [15 : 0] item);
+    extern function void write(logic [15 : 0] item);
     
 endclass : uart_drv
 
@@ -86,7 +86,7 @@ task uart_drv::drv_rx();
     end
 endtask : drv_rx
 
-function uart_drv::write(logic [15 : 0] item);
+function void uart_drv::write(logic [15 : 0] item);
     this.dfr = item;
 endfunction : write
 

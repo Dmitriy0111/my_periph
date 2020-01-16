@@ -13,12 +13,13 @@
 class sif_env extends dvv_env;
     `OBJ_BEGIN( sif_env )
 
-    dvv_gen     #(ctrl_trans)   gen;
+    tr_gen                      gen;
     sif_agt                     agt;
     sif_cov                     cov;
     uart_agt                    u_agt;
 
     dvv_sock    #(ctrl_trans)   gen2drv_sock;
+    dvv_sock    #(ctrl_trans)   drv2gen_sock;
 
     string                      test_type;
 
@@ -60,16 +61,24 @@ task sif_env::build();
     if( gen2drv_sock == null )
         $fatal("gen2drv_sock not created!");
 
+    drv2gen_sock = new();
+    if( drv2gen_sock == null )
+        $fatal("drv2gen_sock not created!");
+
     $display("%s build complete", this.fname);
 endtask : build
 
 task sif_env::connect();
     agt.drv.item_sock.connect(gen2drv_sock);
     gen.item_sock.connect(gen2drv_sock);
+
+    agt.drv.resp_sock.connect(drv2gen_sock);
+    gen.resp_sock.connect(drv2gen_sock);
     
     agt.mon.cov_aep.connect(cov.item_ap);
-    agt.drv.u_mon_aep.connect(u_agt.mon.mon_ap);
-    agt.drv.u_mon_aep.connect(u_agt.drv.drv_ap);
+
+    gen.u_agt_aep.connect(u_agt.mon.mon_ap);
+    gen.u_agt_aep.connect(u_agt.drv.drv_ap);
 endtask : connect
 
 task sif_env::run();

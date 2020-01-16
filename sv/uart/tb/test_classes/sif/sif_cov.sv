@@ -31,7 +31,7 @@ class sif_cov extends dvv_scr #(ctrl_trans);
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern function write(ctrl_trans item);
+    extern function void write(ctrl_trans item);
     
 endclass : sif_cov
 
@@ -41,7 +41,7 @@ function sif_cov::new(string name = "", dvv_bc parent = null);
     sif_cg = new();
 endfunction : new
 
-function sif_cov::write(ctrl_trans item);
+function void sif_cov::write(ctrl_trans item);
     rec_item = item;
     sif_cg.sample();
 endfunction : write

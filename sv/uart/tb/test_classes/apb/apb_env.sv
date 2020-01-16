@@ -13,11 +13,12 @@
 class apb_env extends dvv_env;
     `OBJ_BEGIN( apb_env )
 
-    dvv_gen     #(ctrl_trans)   gen;
+    tr_gen                      gen;
     apb_agt                     agt;
-    uart_mon                    u_mon;
+    uart_agt                    u_agt;
 
     dvv_sock    #(ctrl_trans)   gen2drv_sock;
+    dvv_sock    #(ctrl_trans)   drv2gen_sock;
 
     string                      test_type;
 
@@ -48,15 +49,19 @@ task apb_env::build();
         gen = tr_rgen ::create::create_obj("[ RANDOM GEN ]", this);
     end
 
-    u_mon = uart_mon::create::create_obj("[ UART MON ]", this);
+    u_agt = uart_agt::create::create_obj("[ UART AGT ]", this);
 
     gen.build();
     agt.build();
-    u_mon.build();
+    u_agt.build();
 
     gen2drv_sock = new();
     if( gen2drv_sock == null )
         $fatal("gen2drv_sock not created!");
+
+    drv2gen_sock = new();
+    if( drv2gen_sock == null )
+        $fatal("drv2gen_sock not created!");
     $display("%s build complete", this.fname);
 endtask : build
 
@@ -64,14 +69,18 @@ task apb_env::connect();
     agt.drv.item_sock.connect(gen2drv_sock);
     gen.item_sock.connect(gen2drv_sock);
 
-    agt.drv.u_mon_aep.connect(u_mon.mon_ap);
+    agt.drv.resp_sock.connect(drv2gen_sock);
+    gen.resp_sock.connect(drv2gen_sock);
+
+    gen.u_agt_aep.connect(u_agt.mon.mon_ap);
+    gen.u_agt_aep.connect(u_agt.drv.drv_ap);
 endtask : connect
 
 task apb_env::run();
     fork
         gen.run();
         agt.run();
-        u_mon.run();
+        u_agt.run();
     join_none
 endtask : run
 

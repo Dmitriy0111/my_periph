@@ -13,7 +13,9 @@
 class tr_gen extends dvv_gen #(ctrl_trans);
     `OBJ_BEGIN( tr_gen )
 
-    ctrl_trans  item;
+    ctrl_trans                  item;
+
+    dvv_aep #(logic [15 : 0])   u_agt_aep;
 
     virtual clk_rst_if  vif;
 

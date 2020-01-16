@@ -17,17 +17,14 @@ class sif_drv extends dvv_drv #(ctrl_trans);
     virtual irq_if              irq_vif;
 
     ctrl_trans                  item;
+    ctrl_trans                  resp_item;
 
     sif_mth                     mth;
 
-    dvv_aep #(logic [15 : 0])   u_mon_aep;
-
-    uart_struct                 h_uart = new_uart( 0 , 0 );
-
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);
-    extern task read_reg(logic [31 : 0] r_addr, output logic [31 : 0] r_data);
+    extern task write_reg();
+    extern task read_reg();
 
     extern task build();
     extern task run();
@@ -36,7 +33,6 @@ endclass : sif_drv
 
 function sif_drv::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
-    u_mon_aep = new();
 endfunction : new
 
 task sif_drv::build();
@@ -50,61 +46,42 @@ task sif_drv::build();
     mth.ctrl_vif = ctrl_vif;
 
     item = ctrl_trans::create::create_obj("[ SIF DRV ITEM ]", this);
+    resp_item = ctrl_trans::create::create_obj("[ SIF DRV RESP ITEM ]", this);
 
     item_sock = new();
+    resp_sock = new();
 
     $display("%s build complete", this.fname);
 endtask : build
 
-task sif_drv::write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);
-    mth.set_addr(w_addr);
-    mth.set_wd(w_data);
+task sif_drv::write_reg();
+    mth.set_addr(item.get_addr());
+    mth.set_wd(item.get_data());
     mth.set_we('1);
     mth.set_re('0);
     mth.wait_clk();
     mth.set_we('0);
 endtask : write_reg
 
-task sif_drv::read_reg(logic [31 : 0] r_addr, output logic [31 : 0] r_data);
-    mth.set_addr(r_addr);
+task sif_drv::read_reg();
+    mth.set_addr(item.get_addr());
     mth.set_we('0);
     mth.set_re('1);
     mth.wait_clk();
     mth.set_re('0);
-    r_data = mth.get_rd();
+    resp_item.data = mth.get_rd();
+    resp_sock.send_msg(resp_item);
 endtask : read_reg
 
 task sif_drv::run();
-    mth.wait_reset();
-
-    h_uart.cr_c.data.rx_fifo_lvl = '0;
-    h_uart.cr_c.data.tx_fifo_lvl = '0;
-    h_uart.cr_c.data.rec_en      = '0;
-    h_uart.cr_c.data.tr_en       = '1;
-
-    write_reg(h_uart.cr_c.addr, h_uart.cr_c.data);
-
-    item_sock.trig_sock();
     forever
     begin
         item_sock.rec_msg(item);
 
-        h_uart.tx_rx_c.data = item.data;
-        h_uart.dfr_c.data = item.freq;
-
-        write_reg(h_uart.dfr_c.addr, h_uart.dfr_c.data);
-
-        u_mon_aep.write(h_uart.dfr_c.data);
-
-        write_reg(h_uart.tx_rx_c.addr, h_uart.tx_rx_c.data);
-
-        for(;;)
-        begin
-            read_reg(h_uart.cr_c.addr, h_uart.cr_c.data);
-            if( h_uart.cr_c.data.tx_full == 0 )
-                break;
-        end
-
+        if( item.get_we_re() )
+            write_reg();
+        else
+            read_reg();
         item_sock.trig_sock();
     end
 endtask : run

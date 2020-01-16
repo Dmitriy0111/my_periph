@@ -16,17 +16,14 @@ class apb_drv extends dvv_drv #(ctrl_trans);
     virtual apb_if              vif;
 
     ctrl_trans                  item;
+    ctrl_trans                  resp_item;
 
     apb_mth                     mth;
 
-    dvv_aep #(logic [15 : 0])   u_mon_aep;
-
-    uart_struct                 h_uart = new_uart( 0 , 0 );
-
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);
-    extern task read_reg(logic [31 : 0] r_addr, output logic [31 : 0] r_data);
+    extern task write_reg();
+    extern task read_reg();
 
     extern task build();
     extern task run();
@@ -35,7 +32,6 @@ endclass : apb_drv
 
 function apb_drv::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
-    u_mon_aep = new();
 endfunction : new
 
 task apb_drv::build();
@@ -46,14 +42,17 @@ task apb_drv::build();
     mth.vif = vif;
 
     item = ctrl_trans::create::create_obj("[ APB ITEM ]", this);
+    resp_item = ctrl_trans::create::create_obj("[ APB DRV RESP ITEM ]", this);
+
     item_sock = new();
+    resp_sock = new();
 
     $display("%s build complete", this.fname);
 endtask : build
 
-task apb_drv::write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);
-    mth.set_paddr(w_addr);
-    mth.set_pwdata(w_data);
+task apb_drv::write_reg();
+    mth.set_paddr(item.get_addr());
+    mth.set_pwdata(item.get_data());
     mth.set_psel('1);
     mth.set_pwrite('1);
     mth.wait_clk();
@@ -69,8 +68,8 @@ task apb_drv::write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);
     mth.set_penable('0);
 endtask : write_reg
 
-task apb_drv::read_reg(logic [31 : 0] r_addr, output logic [31 : 0] r_data);
-    mth.set_paddr(r_addr);
+task apb_drv::read_reg();
+    mth.set_paddr(item.get_addr());
     mth.set_psel('1);
     mth.set_pwrite('0);
     mth.wait_clk();
@@ -83,41 +82,20 @@ task apb_drv::read_reg(logic [31 : 0] r_addr, output logic [31 : 0] r_data);
     end
     mth.set_psel('0);
     mth.set_pwrite('0);
-    mth.set_penable('0);
-    r_data = mth.get_prdata();
+    mth.set_penable('0); 
+    resp_item.data = mth.get_prdata();
+    resp_sock.send_msg(resp_item);
 endtask : read_reg
 
 task apb_drv::run();
-    mth.wait_reset();
-
-    h_uart.cr_c.data.rx_fifo_lvl = '0;
-    h_uart.cr_c.data.tx_fifo_lvl = '0;
-    h_uart.cr_c.data.rec_en      = '0;
-    h_uart.cr_c.data.tr_en       = '1;
-
-    write_reg(h_uart.cr_c.addr, h_uart.cr_c.data);
-
-    item_sock.trig_sock();
     forever
     begin
         item_sock.rec_msg(item);
-        
-        h_uart.tx_rx_c.data = item.data;
-        h_uart.dfr_c.data = item.freq;
 
-        write_reg(h_uart.dfr_c.addr, h_uart.dfr_c.data);
-
-        u_mon_aep.write(h_uart.dfr_c.data);
-        
-        write_reg(h_uart.tx_rx_c.addr, h_uart.tx_rx_c.data);
-
-        for(;;)
-        begin
-            read_reg(h_uart.cr_c.addr, h_uart.cr_c.data);
-            if( h_uart.cr_c.data.tx_full == 0 )
-                break;
-        end
-
+        if( item.get_we_re() )
+            write_reg();
+        else
+            read_reg();
         item_sock.trig_sock();
     end
 endtask : run
