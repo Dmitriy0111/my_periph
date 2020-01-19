@@ -25,6 +25,9 @@ class sif_mon extends dvv_mon #(ctrl_trans);
 
     extern task build();
     extern task run();
+
+    extern task pars_we();
+    extern task pars_re();
     
 endclass : sif_mon
 
@@ -41,32 +44,49 @@ task sif_mon::build();
     mth.ctrl_vif = ctrl_vif;
 
     item = ctrl_trans::create::create_obj("[ SIF ITEM ]", this);
-        
-    $display("%s build complete", this.fname);
 endtask : build
 
 task sif_mon::run();
+    fork
+        this.pars_we();
+        this.pars_re();
+    join_none
+endtask : run
+
+task sif_mon::pars_we();
     forever
     begin
+        wait( mth.ctrl_vif.we == 1'b1 );
         mth.wait_clk();
-        #0;
-        if( mth.get_we() )
-        begin
-            item.set_data(mth.get_wd());
-            item.set_addr(mth.get_addr());
-            item.set_we_re(mth.get_we());
-            cov_aep.write(item);
-            $display("WRITE_TR addr = 0x%h, data = 0x%h", mth.get_addr(), mth.get_wd());
-        end
-        if( mth.get_re() )
-        begin
-            item.set_data(mth.get_wd());
-            item.set_addr(mth.get_addr());
-            item.set_we_re(mth.get_re());
-            cov_aep.write(item);
-            $display("READ_TR  addr = 0x%h, data = 0x%h", mth.get_addr(), mth.get_rd());
-        end
+        //#0;
+        //if( mth.get_we() )
+        //begin
+        item.set_data(mth.get_wd());
+        item.set_addr(mth.get_addr());
+        item.set_we_re(1'b1);
+        cov_aep.write(item);
+        $display("WRITE_TR addr = 0x%h, data = 0x%h at time %tns", mth.get_addr(), mth.get_wd(), $time());
+        //end
+        //mth.wait_clk();
     end
-endtask : run
+endtask : pars_we
+
+task sif_mon::pars_re();
+    forever
+    begin
+        wait( mth.ctrl_vif.re == 1'b1 );
+        mth.wait_clk();
+        //#0;
+        //if( mth.get_re() )
+        //begin
+        item.set_data(mth.get_wd());
+        item.set_addr(mth.get_addr());
+        item.set_we_re(1'b0);
+        cov_aep.write(item);
+        $display("READ_TR  addr = 0x%h, data = 0x%h at time %tns", mth.get_addr(), mth.get_rd(), $time());
+        //end
+        //mth.wait_clk();
+    end
+endtask : pars_re
 
 `endif // SIF_MON__SV

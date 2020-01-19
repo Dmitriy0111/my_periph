@@ -20,6 +20,8 @@ class tr_dgen extends tr_gen;
     bit         [31 : 0]    data;
     string                  cmd;
 
+    ctrl_trans              resp_item;
+
     extern function new(string name = "", dvv_bc parent = null);
 
     extern task build();
@@ -30,10 +32,12 @@ endclass : tr_dgen
 function tr_dgen::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
     u_agt_aep = new();
+    scb_aep = new();
 endfunction : new
 
 task tr_dgen::build();
     item = ctrl_trans::create::create_obj("[ GEN ITEM ]",this);
+    resp_item = ctrl_trans::create::create_obj("[ GEN RESP ITEM ]",this);
 
     item_sock = new();
     resp_sock = new();
@@ -44,8 +48,6 @@ task tr_dgen::build();
     fp = $fopen("../sv/uart/tb/test_classes/tr_dgen.dat", "r");
     if( fp == 0 )
         $fatal();
-        
-    $display("%s build complete", this.fname);
 endtask : build
 
 task tr_dgen::run();
@@ -68,12 +70,16 @@ task tr_dgen::run();
     for(; !$feof(fp) ;)
     begin
         $fscanf(fp,"%s %h %h", cmd, addr, data);
+        if( addr == 32'h8 )
+            u_agt_aep.write(data);
         item.set_addr(addr);
         item.set_data(data);
         item.set_we_re( ( cmd == "WR" ? '1 : '0 ) );
         if( cmd == "WR" )
         begin
             item_sock.send_msg(item);
+            if(item.get_addr() == 32'h4)
+                scb_aep.write(item.get_data());
             item_sock.wait_sock();
         end
         else
@@ -82,10 +88,10 @@ task tr_dgen::run();
             begin
                 item_sock.send_msg(item);
                 fork
-                    resp_sock.rec_msg(item);
+                    resp_sock.rec_msg(resp_item);
                     item_sock.wait_sock();
                 join
-                if( ! ( item.get_data() & 32'h4 ) )
+                if( ! ( resp_item.get_data() & 32'h4 ) )
                 break;
             end
         end

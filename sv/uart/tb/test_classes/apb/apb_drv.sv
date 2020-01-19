@@ -46,8 +46,6 @@ task apb_drv::build();
 
     item_sock = new();
     resp_sock = new();
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task apb_drv::write_reg();

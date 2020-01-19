@@ -34,8 +34,6 @@ task apb_mon::build();
 
     mth = apb_mth::create::create_obj("[ APB MON MTH ]", this);
     mth.vif = vif;
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task apb_mon::run();

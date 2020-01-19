@@ -17,6 +17,7 @@ class sif_env extends dvv_env;
     sif_agt                     agt;
     sif_cov                     cov;
     uart_agt                    u_agt;
+    test_scb                    scb;
 
     dvv_sock    #(ctrl_trans)   gen2drv_sock;
     dvv_sock    #(ctrl_trans)   drv2gen_sock;
@@ -41,6 +42,8 @@ task sif_env::build();
 
     agt = sif_agt ::create::create_obj("[ SIF AGT ]", this);
     cov = sif_cov ::create::create_obj("[ SIF COV ]", this);
+    
+    scb = test_scb::create::create_obj("[ TEST SCB ]", this);
 
     if( test_type == "direct_test" )
     begin
@@ -56,6 +59,7 @@ task sif_env::build();
     gen.build();
     agt.build();
     u_agt.build();
+    scb.build();
 
     gen2drv_sock = new();
     if( gen2drv_sock == null )
@@ -64,8 +68,6 @@ task sif_env::build();
     drv2gen_sock = new();
     if( drv2gen_sock == null )
         $fatal("drv2gen_sock not created!");
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task sif_env::connect();
@@ -79,6 +81,9 @@ task sif_env::connect();
 
     gen.u_agt_aep.connect(u_agt.mon.mon_ap);
     gen.u_agt_aep.connect(u_agt.drv.drv_ap);
+
+    gen.scb_aep.connect(scb.ctrl_ap);
+    u_agt.mon.mon_aep.connect(scb.uart_ap);
 endtask : connect
 
 task sif_env::run();
@@ -86,6 +91,7 @@ task sif_env::run();
         gen.run();
         agt.run();
         u_agt.run();
+        scb.run();
     join_none
 endtask : run
 

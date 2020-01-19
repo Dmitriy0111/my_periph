@@ -47,8 +47,6 @@ task ahb_drv::build();
 
     item = ctrl_trans::create::create_obj("[ AHB ITEM ]", this);
     item_sock = new();
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task ahb_drv::write_reg(logic [31 : 0] w_addr, logic [31 : 0] w_data);

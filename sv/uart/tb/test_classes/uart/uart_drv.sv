@@ -52,8 +52,6 @@ task uart_drv::build();
     item = ctrl_trans::create::create_obj("[ UART DRV ITEM ]", this);
 
     item_sock = new();
-        
-    $display("%s build complete", this.fname);
 endtask : build
 
 task uart_drv::run();

@@ -17,7 +17,10 @@ class tr_gen extends dvv_gen #(ctrl_trans);
 
     dvv_aep #(logic [15 : 0])   u_agt_aep;
 
-    virtual clk_rst_if  vif;
+    dvv_aep #(int)              scb_aep;
+
+    virtual clk_rst_if          vif;
+    virtual irq_if              irq_vif;
 
     extern function new(string name = "", dvv_bc parent = null);
 

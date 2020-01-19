@@ -33,8 +33,6 @@ task ahb_agt::build();
 
     drv.build();
     mon.build();
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task ahb_agt::run();

@@ -40,6 +40,8 @@ package uart_test_pkg;
     `include "tr_gen.sv"
     `include "tr_rgen.sv"
     `include "tr_dgen.sv"
+
+    `include "test_scb.sv"
     
     `include "uart/uart_mon.sv"
     `include "uart/uart_drv.sv"

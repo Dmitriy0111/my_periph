@@ -57,7 +57,6 @@ task ahb_env::build();
     gen2drv_sock = new();
     if( gen2drv_sock == null )
         $fatal("gen2drv_sock not created!");
-    $display("%s build complete", this.fname);
 endtask : build
 
 task ahb_env::connect();

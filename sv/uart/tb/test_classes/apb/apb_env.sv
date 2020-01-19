@@ -62,7 +62,6 @@ task apb_env::build();
     drv2gen_sock = new();
     if( drv2gen_sock == null )
         $fatal("drv2gen_sock not created!");
-    $display("%s build complete", this.fname);
 endtask : build
 
 task apb_env::connect();

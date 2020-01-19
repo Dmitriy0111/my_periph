@@ -27,6 +27,13 @@ class sif_cov extends dvv_scr #(ctrl_trans);
             bins    irq_v_bin   = { h_uart.irq_v_c.addr };
         }
 
+        we_re_cp : coverpoint rec_item.we_re {
+            bins    we_bin  = { 1'b1 };
+            bins    re_bin  = { 1'b0 };
+        }
+
+        addr_we_re_cross : cross addr_cp, we_re_cp;
+
     endgroup : sif_cg
 
     extern function new(string name = "", dvv_bc parent = null);

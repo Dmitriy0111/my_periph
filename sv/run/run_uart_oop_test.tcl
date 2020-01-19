@@ -17,7 +17,7 @@ vlog -sv ../sv/uart/tb/if/*.*v
 vlog -sv ../sv/uart/tb/test_classes/uart_test_pkg.sv 
 vlog -sv ../sv/uart/tb/uart_ctb.*v
 
-vsim -novopt work.uart_ctb -gif_name="sif_if" -gtest_type="direct_test"
+vsim -novopt work.uart_ctb -gif_name="sif_if" -gtest_type="rand_test"
 
 add wave -divider  "testbench signals"
 add wave -position insertpoint sim:/uart_ctb/*

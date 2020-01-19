@@ -35,7 +35,6 @@ endtask : wait_clk
 task ahb_mon::build();
     if( !dvv_res_db#(virtual ahb_if)::get_res_db("ahb_if_0",vif) )
         $fatal();
-    $display("%s build complete", this.fname);
 endtask : build
 
 task ahb_mon::run();

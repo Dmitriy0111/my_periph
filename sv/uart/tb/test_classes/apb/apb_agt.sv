@@ -33,8 +33,6 @@ task apb_agt::build();
 
     drv.build();
     mon.build();
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task apb_agt::run();

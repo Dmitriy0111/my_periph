@@ -44,8 +44,6 @@ task uart_dtest::build();
     endcase
 
     env.build();
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task uart_dtest::connect();

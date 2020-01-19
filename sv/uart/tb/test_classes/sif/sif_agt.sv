@@ -33,8 +33,6 @@ task sif_agt::build();
 
     drv.build();
     mon.build();
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task sif_agt::run();

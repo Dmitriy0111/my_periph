@@ -68,7 +68,7 @@ module uart
     assign tx_req = ! tx_fifo_emp;
     assign irq = | irq_v_out;
     
-    assign irq_v_we_f = { 8 { irq_v_we_si } } | irq_v_we.rff;
+    assign irq_v_we_f = { 8 { irq_v_we_si } } | irq_v_we;
 
     assign irq_v_we.un = '0;
     assign irq_v_we.rff = ( cr_out.rx_full && irq_m.rff );

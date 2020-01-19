@@ -33,8 +33,6 @@ task avalon_agt::build();
 
     drv.build();
     mon.build();
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task avalon_agt::run();

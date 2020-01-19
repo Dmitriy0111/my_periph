@@ -19,6 +19,8 @@ class uart_mon extends dvv_mon #(ctrl_trans);
 
     dvv_ap  #(logic [15 : 0], mon_t)    mon_ap;
 
+    dvv_aep #(int)                      mon_aep;
+
     virtual uart_if                     vif;
 
     extern function new(string name = "", dvv_bc parent = null);
@@ -38,6 +40,7 @@ endclass : uart_mon
 function uart_mon::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
     mon_ap = new(this);
+    mon_aep = new();
 endfunction : new
 
 task uart_mon::wait_clk();
@@ -47,8 +50,6 @@ endtask : wait_clk
 task uart_mon::build();
     if( !dvv_res_db#(virtual uart_if)::get_res_db("uif_0",vif) )
         $fatal();
-        
-    $display("%s build complete", this.fname);
 endtask : build
 
 task uart_mon::run();
@@ -71,6 +72,7 @@ task uart_mon::mon_tx();
             rec_data = {vif.uart_tx , rec_data[7 : 1]};
             repeat(this.dfr>>1) this.wait_clk();
         end
+        mon_aep.write(rec_data);
         $display("UART transmitted data on tx wire = %c (%h)", rec_data, rec_data);
     end
 endtask : mon_tx

@@ -34,8 +34,6 @@ task avalon_mon::build();
 
     mth = avalon_mth::create::create_obj("[ AVALON MON MTH ]", this);
     mth.vif = vif;
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task avalon_mon::run();

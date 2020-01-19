@@ -14,7 +14,6 @@ class sif_drv extends dvv_drv #(ctrl_trans);
     `OBJ_BEGIN( sif_drv )
 
     virtual simple_if           ctrl_vif;
-    virtual irq_if              irq_vif;
 
     ctrl_trans                  item;
     ctrl_trans                  resp_item;
@@ -39,9 +38,6 @@ task sif_drv::build();
     if( !dvv_res_db#(virtual simple_if)::get_res_db("sif_if_0",ctrl_vif) )
         $fatal();
 
-    if( !dvv_res_db#(virtual irq_if)::get_res_db("irq_if_0",irq_vif) )
-        $fatal();
-
     mth = sif_mth::create::create_obj("[ SIF DRV MTH ]", this);
     mth.ctrl_vif = ctrl_vif;
 
@@ -50,8 +46,6 @@ task sif_drv::build();
 
     item_sock = new();
     resp_sock = new();
-
-    $display("%s build complete", this.fname);
 endtask : build
 
 task sif_drv::write_reg();

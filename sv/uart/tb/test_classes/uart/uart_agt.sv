@@ -33,8 +33,6 @@ task uart_agt::build();
 
     mon.build();
     drv.build();
-    
-    $display("%s build complete", this.fname);
 endtask : build
 
 task uart_agt::run();
