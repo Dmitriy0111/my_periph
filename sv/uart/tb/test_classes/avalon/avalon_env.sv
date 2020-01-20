@@ -26,7 +26,6 @@ class avalon_env extends dvv_env;
 
     extern task build();
     extern task connect();
-    extern task run();
     
 endclass : avalon_env
 
@@ -51,10 +50,6 @@ task avalon_env::build();
 
     u_agt = uart_agt::create::create_obj("[ UART AGT ]", this);
 
-    gen.build();
-    agt.build();
-    u_agt.build();
-
     gen2drv_sock = new();
     if( gen2drv_sock == null )
         $fatal("gen2drv_sock not created!");
@@ -74,13 +69,5 @@ task avalon_env::connect();
     gen.u_agt_aep.connect(u_agt.mon.mon_ap);
     gen.u_agt_aep.connect(u_agt.drv.drv_ap);
 endtask : connect
-
-task avalon_env::run();
-    fork
-        gen.run();
-        agt.run();
-        u_agt.run();
-    join_none
-endtask : run
 
 `endif // AVALON_ENV__SV

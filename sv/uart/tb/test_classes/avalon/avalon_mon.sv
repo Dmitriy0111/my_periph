@@ -37,22 +37,24 @@ task avalon_mon::build();
 endtask : build
 
 task avalon_mon::run();
-    forever
-    begin
-        mth.wait_clk();
-        #0;
-        if( mth.write_detect() )
+    fork
+        forever
         begin
-            $display("WRITE_TR addr = 0x%h, data = 0x%h", mth.get_address(), mth.get_writedata());
+            mth.wait_clk();
+            #0;
+            if( mth.write_detect() )
+            begin
+                $display("WRITE_TR addr = 0x%h, data = 0x%h", mth.get_address(), mth.get_writedata());
+            end
+            if( mth.read_detect() )
+            begin
+                fork
+                    mth.wait_clk();
+                    $display("READ_TR  addr = 0x%h, data = 0x%h", mth.get_address(), mth.get_readdata());
+                join_none
+            end
         end
-        if( mth.read_detect() )
-        begin
-            fork
-                mth.wait_clk();
-                $display("READ_TR  addr = 0x%h, data = 0x%h", mth.get_address(), mth.get_readdata());
-            join_none
-        end
-    end
+    join_none
 endtask : run
 
 `endif // AVALON_MON__SV

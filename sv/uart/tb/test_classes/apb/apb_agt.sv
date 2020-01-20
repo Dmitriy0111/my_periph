@@ -19,7 +19,6 @@ class apb_agt extends dvv_agt;
     extern function new(string name = "", dvv_bc parent = null);
 
     extern task build();
-    extern task run();
     
 endclass : apb_agt
 
@@ -30,16 +29,6 @@ endfunction : new
 task apb_agt::build();
     drv = apb_drv ::create::create_obj("[ APB DRV ]", this);
     mon = apb_mon ::create::create_obj("[ APB MON ]", this);
-
-    drv.build();
-    mon.build();
 endtask : build
-
-task apb_agt::run();
-    fork
-        drv.run();
-        mon.run();
-    join_none
-endtask : run
 
 `endif // APB_AGT__SV

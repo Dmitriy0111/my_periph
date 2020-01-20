@@ -52,14 +52,16 @@ task test_scb::build();
 endtask : build
 
 task test_scb::run();
-    forever
-    begin
-        wait( (ctrl_q.size() != 0 ) && ( uart_q.size() != 0 ) );
-        if( ctrl_q[0] == uart_q[0] )
-            $display("TEST PASS %h %h", ctrl_q.pop_front(), uart_q.pop_front() );
-        else
-            $display("TEST FAIL %h %h", ctrl_q.pop_front(), uart_q.pop_front() );
-    end
+    fork
+        forever
+        begin
+            wait( (ctrl_q.size() != 0 ) && ( uart_q.size() != 0 ) );
+            if( ctrl_q[0] == uart_q[0] )
+                $display("TEST PASS %h %h", ctrl_q.pop_front(), uart_q.pop_front() );
+            else
+                $display("TEST FAIL %h %h", ctrl_q.pop_front(), uart_q.pop_front() );
+        end
+    join_none
 endtask : run
 
 `endif // TEST_SCB__SV

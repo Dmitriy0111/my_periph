@@ -49,7 +49,7 @@ task uart_drv::build();
     if( !dvv_res_db#(virtual uart_if)::get_res_db("uif_0",vif) )
         $fatal();
 
-    item = ctrl_trans::create::create_obj("[ UART DRV ITEM ]", this);
+    item = new("[ UART DRV ITEM ]", this);
 
     item_sock = new();
 endtask : build

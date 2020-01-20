@@ -41,8 +41,8 @@ task avalon_drv::build();
     mth = avalon_mth::create::create_obj("[ AVALON DRV MTH ]", this);
     mth.vif = vif;
 
-    item = ctrl_trans::create::create_obj("[ AVALON DRV ITEM ]", this);
-    resp_item = ctrl_trans::create::create_obj("[ AVALON DRV RESP ITEM ]", this);
+    item = new("[ AVALON DRV ITEM ]", this);
+    resp_item = new("[ AVALON DRV RESP ITEM ]", this);
 
     item_sock = new();
     resp_sock = new();
@@ -71,17 +71,19 @@ task avalon_drv::read_reg();
 endtask : read_reg
 
 task avalon_drv::run();
-    forever
-    begin
-        item_sock.rec_msg(item);
-        item.set_addr(item.get_addr()>>2);
-
-        if( item.get_we_re() )
+    fork
+        forever
+        begin
+            item_sock.rec_msg(item);
+            item.set_addr(item.get_addr()>>2);
+            
+            if( item.get_we_re() )
             write_reg();
-        else
+            else
             read_reg();
-        item_sock.trig_sock();
-    end
+            item_sock.trig_sock();
+        end
+    join_none
 endtask : run
 
 `endif // AVALON_DRV__SV

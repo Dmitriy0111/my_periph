@@ -19,7 +19,6 @@ class sif_agt extends dvv_agt;
     extern function new(string name = "", dvv_bc parent = null);
 
     extern task build();
-    extern task run();
     
 endclass : sif_agt
 
@@ -30,16 +29,6 @@ endfunction : new
 task sif_agt::build();
     drv = sif_drv ::create::create_obj("[ SIF DRV ]", this);
     mon = sif_mon ::create::create_obj("[ SIF MON ]", this);
-
-    drv.build();
-    mon.build();
 endtask : build
-
-task sif_agt::run();
-    fork
-        drv.run();
-        mon.run();
-    join_none
-endtask : run
 
 `endif // SIF_AGT__SV

@@ -36,8 +36,8 @@ function tr_dgen::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task tr_dgen::build();
-    item = ctrl_trans::create::create_obj("[ GEN ITEM ]",this);
-    resp_item = ctrl_trans::create::create_obj("[ GEN RESP ITEM ]",this);
+    item = new("[ GEN ITEM ]",this);
+    resp_item = new("[ GEN RESP ITEM ]",this);
 
     item_sock = new();
     resp_sock = new();
@@ -51,52 +51,56 @@ task tr_dgen::build();
 endtask : build
 
 task tr_dgen::run();
-    @(posedge vif.rstn);
-
-    item.set_addr( 32'h0 );
-    item.set_data( 32'h01 );
-    item.set_we_re( '1 );
-    item.tr_num++;
-    item_sock.send_msg(item);
-    item_sock.wait_sock();
-
-    item.set_addr( 32'h8 );
-    item.set_data( 32'h28 );
-    item.set_we_re( '1 );
-    item.tr_num++;
-    item_sock.send_msg(item);
-    item_sock.wait_sock();
-
-    for(; !$feof(fp) ;)
-    begin
-        $fscanf(fp,"%s %h %h", cmd, addr, data);
-        if( addr == 32'h8 )
-            u_agt_aep.write(data);
-        item.set_addr(addr);
-        item.set_data(data);
-        item.set_we_re( ( cmd == "WR" ? '1 : '0 ) );
-        if( cmd == "WR" )
+    fork
         begin
+            @(posedge vif.rstn);
+            
+            item.set_addr( 32'h0 );
+            item.set_data( 32'h01 );
+            item.set_we_re( '1 );
+            item.tr_num++;
             item_sock.send_msg(item);
-            if(item.get_addr() == 32'h4)
-                scb_aep.write(item.get_data());
             item_sock.wait_sock();
-        end
-        else
-        begin
-            for(;;)
+            
+            item.set_addr( 32'h8 );
+            item.set_data( 32'h28 );
+            item.set_we_re( '1 );
+            item.tr_num++;
+            item_sock.send_msg(item);
+            item_sock.wait_sock();
+            
+            for(; !$feof(fp) ;)
             begin
-                item_sock.send_msg(item);
-                fork
-                    resp_sock.rec_msg(resp_item);
+                $fscanf(fp,"%s %h %h", cmd, addr, data);
+                if( addr == 32'h8 )
+                u_agt_aep.write(data);
+                item.set_addr(addr);
+                item.set_data(data);
+                item.set_we_re( ( cmd == "WR" ? '1 : '0 ) );
+                if( cmd == "WR" )
+                begin
+                    item_sock.send_msg(item);
+                    if(item.get_addr() == 32'h4)
+                    scb_aep.write(item.get_data());
                     item_sock.wait_sock();
-                join
-                if( ! ( resp_item.get_data() & 32'h4 ) )
-                break;
+                end
+                else
+                begin
+                    for(;;)
+                    begin
+                        item_sock.send_msg(item);
+                        fork
+                            resp_sock.rec_msg(resp_item);
+                            item_sock.wait_sock();
+                        join
+                        if( ! ( resp_item.get_data() & 32'h4 ) )
+                        break;
+                    end
+                end
             end
+            $stop;
         end
-    end
-    $stop;
+    join_none
 endtask : run
 
 `endif // TR_DGEN__SV

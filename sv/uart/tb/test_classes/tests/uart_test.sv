@@ -15,11 +15,7 @@ class uart_test extends dvv_test;
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern virtual task build();
-    extern virtual task connect();
-    extern virtual task run();
-
-    extern virtual task test_start();
+    extern task build();
     
 endclass : uart_test
 
@@ -28,15 +24,7 @@ function uart_test::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task uart_test::build();
+    super.build();
 endtask : build
-
-task uart_test::connect();
-endtask : connect
-
-task uart_test::run();
-endtask : run
-
-task uart_test::test_start();
-endtask : test_start
 
 `endif // UART_TEST__SV

@@ -19,7 +19,6 @@ class ahb_agt extends dvv_agt;
     extern function new(string name = "", dvv_bc parent = null);
 
     extern task build();
-    extern task run();
     
 endclass : ahb_agt
 
@@ -30,16 +29,6 @@ endfunction : new
 task ahb_agt::build();
     drv = ahb_drv ::create::create_obj("[ AHB DRV ]", this);
     mon = ahb_mon ::create::create_obj("[ AHB MON ]", this);
-
-    drv.build();
-    mon.build();
 endtask : build
-
-task ahb_agt::run();
-    fork
-        drv.run();
-        mon.run();
-    join_none
-endtask : run
 
 `endif // AHB_AGT__SV

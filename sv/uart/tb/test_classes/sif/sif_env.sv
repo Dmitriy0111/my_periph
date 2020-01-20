@@ -28,7 +28,6 @@ class sif_env extends dvv_env;
 
     extern task build();
     extern task connect();
-    extern task run();
     
 endclass : sif_env
 
@@ -55,11 +54,6 @@ task sif_env::build();
     end
 
     u_agt = uart_agt::create::create_obj("[ UART AGT ]", this);
-    
-    gen.build();
-    agt.build();
-    u_agt.build();
-    scb.build();
 
     gen2drv_sock = new();
     if( gen2drv_sock == null )
@@ -85,14 +79,5 @@ task sif_env::connect();
     gen.scb_aep.connect(scb.ctrl_ap);
     u_agt.mon.mon_aep.connect(scb.uart_ap);
 endtask : connect
-
-task sif_env::run();
-    fork
-        gen.run();
-        agt.run();
-        u_agt.run();
-        scb.run();
-    join_none
-endtask : run
 
 `endif // SIF_ENV__SV

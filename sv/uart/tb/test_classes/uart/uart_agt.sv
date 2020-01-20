@@ -19,7 +19,6 @@ class uart_agt extends dvv_agt;
     extern function new(string name = "", dvv_bc parent = null);
 
     extern task build();
-    extern task run();
     
 endclass : uart_agt
 
@@ -30,16 +29,6 @@ endfunction : new
 task uart_agt::build();
     mon = uart_mon::create::create_obj("[ UART MON ]", this);
     drv = uart_drv::create::create_obj("[ UART DRV ]", this);
-
-    mon.build();
-    drv.build();
 endtask : build
-
-task uart_agt::run();
-    fork
-        mon.run();
-        drv.run();
-    join_none
-endtask : run
 
 `endif // UART_AGT__SV

@@ -33,8 +33,8 @@ function tr_rgen::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task tr_rgen::build();
-    item = ctrl_trans::create::create_obj("[ GEN ITEM ]",this);
-    resp_item = ctrl_trans::create::create_obj("[ GEN RESP ITEM ]",this);
+    item = new("[ GEN ITEM ]",this);
+    resp_item = new("[ GEN RESP ITEM ]",this);
 
     item_sock = new();
     resp_sock = new();
@@ -50,127 +50,131 @@ task tr_rgen::build();
 endtask : build
 
 task tr_rgen::run();
-    @(posedge vif.rstn);
+    fork
+        begin
+            @(posedge vif.rstn);
 
-    repeat(repeat_n)
-    begin
-        randsequence (rand_seq)
-            rand_seq        : set_cr set_irq_m set_dfr set_tr_data wait_tr;
-            set_cr          :
-            {
-                if( | uart_p.cr_c.data[1 : 0] )
-                    return;
-                else
-                begin
-                    uart_p.cr_c.data.tr_en = '1;
-                    item.set_addr( uart_p.cr_c.addr );
-                    item.set_data( uart_p.cr_c.data );
-                    item.set_we_re( '1 );
-                    item_sock.send_msg(item);
-                    item_sock.wait_sock();
-                    $display("set_cr");
-                end
-            };
-            set_irq_m       :
-            {   
-                if( $urandom_range(0,1) )
-                begin
-                    $display("set_irq_m_1");
-                    if( ! uart_p.irq_m_c.data[0] )
-                    begin
-                        uart_p.irq_m_c.data[0] = '1;
-                        item.set_addr( uart_p.irq_m_c.addr );
-                        item.set_data( uart_p.irq_m_c.data );
+            repeat(repeat_n)
+            begin
+                randsequence (rand_seq)
+                    rand_seq        : set_cr set_irq_m set_dfr set_tr_data wait_tr;
+                    set_cr          :
+                    {
+                        if( | uart_p.cr_c.data[1 : 0] )
+                            return;
+                        else
+                        begin
+                            uart_p.cr_c.data.tr_en = '1;
+                            item.set_addr( uart_p.cr_c.addr );
+                            item.set_data( uart_p.cr_c.data );
+                            item.set_we_re( '1 );
+                            item_sock.send_msg(item);
+                            item_sock.wait_sock();
+                            $display("set_cr");
+                        end
+                    };
+                    set_irq_m       :
+                    {   
+                        if( $urandom_range(0,1) )
+                        begin
+                            $display("set_irq_m_1");
+                            if( ! uart_p.irq_m_c.data[0] )
+                            begin
+                                uart_p.irq_m_c.data[0] = '1;
+                                item.set_addr( uart_p.irq_m_c.addr );
+                                item.set_data( uart_p.irq_m_c.data );
+                                item.set_we_re( '1 );
+                                item_sock.send_msg(item);
+                                item_sock.wait_sock();
+                            end
+                        end
+                        else
+                        begin
+                            $display("set_irq_m_0");
+                            if(   uart_p.irq_m_c.data[0] )
+                            begin
+                                uart_p.irq_m_c.data[0] = '0;
+                                item.set_addr( uart_p.irq_m_c.addr );
+                                item.set_data( uart_p.irq_m_c.data );
+                                item.set_we_re( '1 );
+                                item_sock.send_msg(item);
+                                item_sock.wait_sock();
+                            end
+                        end
+                    };
+                    set_dfr         :   
+                    { 
+                        if( ( ( $urandom_range(0,1) == 0 ) && ( uart_p.dfr_c.data != 0 ) ) ) 
+                            return; 
+                        item.data_tr_c.constraint_mode(0); 
+                        item.data_freq_c.constraint_mode(1); 
+                        item.make_tr();
+                        item.set_addr( 32'h8 );
+                        item.set_we_re( '1 );
+                        u_agt_aep.write(item.get_data());
+                        item_sock.send_msg(item);
+                        item_sock.wait_sock();
+                        $display("set_dfr");
+                    };
+                    set_tr_data     : 
+                    { 
+                        item.data_tr_c.constraint_mode(1); 
+                        item.data_freq_c.constraint_mode(0); 
+                        item.make_tr();
+                        item.set_addr( 32'h4 );
+                        item.set_we_re( '1 );
+                        scb_aep.write(item.get_data());
+                        item_sock.send_msg(item);
+                        item_sock.wait_sock();
+                        $display("set_tr_data"); 
+                    };
+                    wait_tr         :
+                        if( uart_p.irq_m_c.data[0] )
+                            wait_tr_irq
+                        else
+                            wait_tr_done;
+                    wait_tr_done    : 
+                    { 
+                        for(;;)
+                        begin
+                            item.set_addr( 32'h0 );
+                            item.set_data( '0 );
+                            item.set_we_re( '0 );
+                            item.tr_num++;
+                            item_sock.send_msg(item);
+                            fork
+                                resp_sock.rec_msg(resp_item);
+                                item_sock.wait_sock();
+                            join
+                            if( ! ( resp_item.get_data() & 32'h4 ) )
+                            break;
+                        end
+                        $display("wait_tr_done"); 
+                    };
+                    wait_tr_irq     : 
+                    { 
+                        @(posedge irq_vif.irq);//wait(irq_vif.irq == 1'b0);
+                        item.set_addr( uart_p.irq_v_c.addr );
+                        item.set_data( '0 );
+                        item.set_we_re( '0 );
+                        item_sock.send_msg(item);
+                        fork
+                            resp_sock.rec_msg(resp_item);
+                            item_sock.wait_sock();
+                        join
+                        item.set_data(resp_item.get_data() & (~32'h1));
+                        item.set_addr( uart_p.irq_v_c.addr );
+                        item.set_data( '0 );
                         item.set_we_re( '1 );
                         item_sock.send_msg(item);
                         item_sock.wait_sock();
-                    end
-                end
-                else
-                begin
-                    $display("set_irq_m_0");
-                    if(   uart_p.irq_m_c.data[0] )
-                    begin
-                        uart_p.irq_m_c.data[0] = '0;
-                        item.set_addr( uart_p.irq_m_c.addr );
-                        item.set_data( uart_p.irq_m_c.data );
-                        item.set_we_re( '1 );
-                        item_sock.send_msg(item);
-                        item_sock.wait_sock();
-                    end
-                end
-            };
-            set_dfr         :   
-            { 
-                if( ( ( $urandom_range(0,1) == 0 ) && ( uart_p.dfr_c.data != 0 ) ) ) 
-                    return; 
-                item.data_tr_c.constraint_mode(0); 
-                item.data_freq_c.constraint_mode(1); 
-                item.make_tr();
-                item.set_addr( 32'h8 );
-                item.set_we_re( '1 );
-                u_agt_aep.write(item.get_data());
-                item_sock.send_msg(item);
-                item_sock.wait_sock();
-                $display("set_dfr");
-            };
-            set_tr_data     : 
-            { 
-                item.data_tr_c.constraint_mode(1); 
-                item.data_freq_c.constraint_mode(0); 
-                item.make_tr();
-                item.set_addr( 32'h4 );
-                item.set_we_re( '1 );
-                scb_aep.write(item.get_data());
-                item_sock.send_msg(item);
-                item_sock.wait_sock();
-                $display("set_tr_data"); 
-            };
-            wait_tr         :
-                if( uart_p.irq_m_c.data[0] )
-                    wait_tr_irq
-                else
-                    wait_tr_done;
-            wait_tr_done    : 
-            { 
-                for(;;)
-                begin
-                    item.set_addr( 32'h0 );
-                    item.set_data( '0 );
-                    item.set_we_re( '0 );
-                    item.tr_num++;
-                    item_sock.send_msg(item);
-                    fork
-                        resp_sock.rec_msg(resp_item);
-                        item_sock.wait_sock();
-                    join
-                    if( ! ( resp_item.get_data() & 32'h4 ) )
-                    break;
-                end
-                $display("wait_tr_done"); 
-            };
-            wait_tr_irq     : 
-            { 
-                @(posedge irq_vif.irq);//wait(irq_vif.irq == 1'b0);
-                item.set_addr( uart_p.irq_v_c.addr );
-                item.set_data( '0 );
-                item.set_we_re( '0 );
-                item_sock.send_msg(item);
-                fork
-                    resp_sock.rec_msg(resp_item);
-                    item_sock.wait_sock();
-                join
-                item.set_data(resp_item.get_data() & (~32'h1));
-                item.set_addr( uart_p.irq_v_c.addr );
-                item.set_data( '0 );
-                item.set_we_re( '1 );
-                item_sock.send_msg(item);
-                item_sock.wait_sock();
-                $display("wait_tr_irq"); 
-            };
-        endsequence
-    end
-    $stop;
+                        $display("wait_tr_irq"); 
+                    };
+                endsequence
+            end
+            $stop;
+        end
+    join_none
 endtask : run
 
 `endif // TR_RGEN__SV

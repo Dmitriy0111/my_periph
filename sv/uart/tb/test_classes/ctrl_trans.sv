@@ -40,11 +40,12 @@ class ctrl_trans extends dvv_bc;
     extern function logic [31 : 0] get_addr();
 
     extern task make_tr();
+
+    extern function ctrl_trans copy();
     
 endclass : ctrl_trans
 
 function ctrl_trans::new(string name = "", dvv_bc parent = null);
-    super.new(name,parent);
 endfunction : new
 
 task ctrl_trans::print();
@@ -82,5 +83,13 @@ task ctrl_trans::make_tr();
         $fatal("Randomization error!");
     tr_num ++;
 endtask : make_tr
+
+function ctrl_trans ctrl_trans::copy();
+    copy = new();
+    copy.addr = this.addr;
+    copy.data = this.data;
+    copy.we_re = this.we_re;
+    return copy;
+endfunction : copy
 
 `endif // CTRL_TRANS__SV

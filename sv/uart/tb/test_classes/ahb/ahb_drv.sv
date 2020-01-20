@@ -45,7 +45,7 @@ task ahb_drv::build();
     mth = ahb_mth::create::create_obj("[ AHB DRV MTH ]", this);
     mth.vif = vif;
 
-    item = ctrl_trans::create::create_obj("[ AHB ITEM ]", this);
+    item = new("[ AHB ITEM ]", this);
     item_sock = new();
 endtask : build
 

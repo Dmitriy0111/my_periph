@@ -25,7 +25,6 @@ class ahb_env extends dvv_env;
 
     extern task build();
     extern task connect();
-    extern task run();
     
 endclass : ahb_env
 
@@ -50,10 +49,6 @@ task ahb_env::build();
 
     u_mon = uart_mon::create::create_obj("[ UART MON ]", this);
 
-    gen.build();
-    agt.build();
-    u_mon.build();
-
     gen2drv_sock = new();
     if( gen2drv_sock == null )
         $fatal("gen2drv_sock not created!");
@@ -65,13 +60,5 @@ task ahb_env::connect();
 
     agt.drv.u_mon_aep.connect(u_mon.mon_ap);
 endtask : connect
-
-task ahb_env::run();
-    fork
-        gen.run();
-        agt.run();
-        u_mon.run();
-    join_none
-endtask : run
 
 `endif // AHB_ENV__SV

@@ -19,7 +19,6 @@ class avalon_agt extends dvv_agt;
     extern function new(string name = "", dvv_bc parent = null);
 
     extern task build();
-    extern task run();
     
 endclass : avalon_agt
 
@@ -30,16 +29,6 @@ endfunction : new
 task avalon_agt::build();
     drv = avalon_drv::create::create_obj("[ AVALON DRV ]", this);
     mon = avalon_mon::create::create_obj("[ AVALON MON ]", this);
-
-    drv.build();
-    mon.build();
 endtask : build
-
-task avalon_agt::run();
-    fork
-        drv.run();
-        mon.run();
-    join_none
-endtask : run
 
 `endif // AVALON_AGT__SV

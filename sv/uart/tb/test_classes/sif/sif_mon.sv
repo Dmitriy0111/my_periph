@@ -43,7 +43,7 @@ task sif_mon::build();
     mth = sif_mth::create::create_obj("[ SIF MON MTH ]", this);
     mth.ctrl_vif = ctrl_vif;
 
-    item = ctrl_trans::create::create_obj("[ SIF ITEM ]", this);
+    item = new("[ SIF ITEM ]", this);
 endtask : build
 
 task sif_mon::run();
@@ -58,16 +58,11 @@ task sif_mon::pars_we();
     begin
         wait( mth.ctrl_vif.we == 1'b1 );
         mth.wait_clk();
-        //#0;
-        //if( mth.get_we() )
-        //begin
         item.set_data(mth.get_wd());
         item.set_addr(mth.get_addr());
         item.set_we_re(1'b1);
         cov_aep.write(item);
         $display("WRITE_TR addr = 0x%h, data = 0x%h at time %tns", mth.get_addr(), mth.get_wd(), $time());
-        //end
-        //mth.wait_clk();
     end
 endtask : pars_we
 
@@ -76,16 +71,11 @@ task sif_mon::pars_re();
     begin
         wait( mth.ctrl_vif.re == 1'b1 );
         mth.wait_clk();
-        //#0;
-        //if( mth.get_re() )
-        //begin
         item.set_data(mth.get_wd());
         item.set_addr(mth.get_addr());
         item.set_we_re(1'b0);
         cov_aep.write(item);
         $display("READ_TR  addr = 0x%h, data = 0x%h at time %tns", mth.get_addr(), mth.get_rd(), $time());
-        //end
-        //mth.wait_clk();
     end
 endtask : pars_re
 

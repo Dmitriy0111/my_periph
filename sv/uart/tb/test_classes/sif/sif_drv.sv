@@ -41,8 +41,8 @@ task sif_drv::build();
     mth = sif_mth::create::create_obj("[ SIF DRV MTH ]", this);
     mth.ctrl_vif = ctrl_vif;
 
-    item = ctrl_trans::create::create_obj("[ SIF DRV ITEM ]", this);
-    resp_item = ctrl_trans::create::create_obj("[ SIF DRV RESP ITEM ]", this);
+    item = new("[ SIF DRV ITEM ]", this);
+    resp_item = new("[ SIF DRV RESP ITEM ]", this);
 
     item_sock = new();
     resp_sock = new();
@@ -68,16 +68,18 @@ task sif_drv::read_reg();
 endtask : read_reg
 
 task sif_drv::run();
-    forever
-    begin
-        item_sock.rec_msg(item);
-
-        if( item.get_we_re() )
+    fork        
+        forever
+        begin
+            item_sock.rec_msg(item);
+            
+            if( item.get_we_re() )
             write_reg();
-        else
+            else
             read_reg();
-        item_sock.trig_sock();
-    end
+            item_sock.trig_sock();
+        end
+    join_none
 endtask : run
 
 `endif // SIF_DRV__SV

@@ -41,8 +41,8 @@ task apb_drv::build();
     mth = apb_mth::create::create_obj("[ APB DRV MTH ]", this);
     mth.vif = vif;
 
-    item = ctrl_trans::create::create_obj("[ APB ITEM ]", this);
-    resp_item = ctrl_trans::create::create_obj("[ APB DRV RESP ITEM ]", this);
+    item = new("[ APB ITEM ]", this);
+    resp_item = new("[ APB DRV RESP ITEM ]", this);
 
     item_sock = new();
     resp_sock = new();

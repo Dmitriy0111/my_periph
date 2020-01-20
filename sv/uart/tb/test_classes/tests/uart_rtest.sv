@@ -20,10 +20,6 @@ class uart_rtest extends uart_test;
     extern function new(string name = "", dvv_bc parent = null);
 
     extern task build();
-    extern task connect();
-    extern task run();
-
-    extern task test_start();
     
 endclass : uart_rtest
 
@@ -32,6 +28,8 @@ function uart_rtest::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task uart_rtest::build();
+    super.build();
+
     if( !dvv_res_db#(string)::get_res_db("test_if",if_name) )
         $fatal();
 
@@ -42,32 +40,6 @@ task uart_rtest::build();
         "avalon_if" : env = avalon_env::create::create_obj("[ AVALON ENV ]", this);
         default     : $fatal("Enviroment undefined");
     endcase
-
-    env.build();
 endtask : build
-
-task uart_rtest::connect();
-    env.connect();
-endtask : connect
-
-task uart_rtest::run();
-    fork
-        env.run();
-    join_none
-endtask : run
-
-task uart_rtest::test_start();
-    $display("%s build phase start.", this.fname);
-    this.build();
-    $display("%s build phase complete.", this.fname);
-
-    $display("%s connect phase start.", this.fname);
-    this.connect();
-    $display("%s connect phase complete.", this.fname);
-
-    $display("%s run phase start.", this.fname);
-    this.run();
-    $display("%s run phase complete.", this.fname);
-endtask : test_start
 
 `endif // UART_RTEST__SV

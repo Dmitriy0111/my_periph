@@ -14,6 +14,8 @@ RUN_DIR  = $(PWD)/$(HDL_LANG)/run
 HDL_LANG ?= sv
 PERIPH ?= uart
 
+TB_TYPE ?= oop
+
 ########################################################
 # common make targets
 
@@ -32,7 +34,7 @@ sim: sim_gui
 ########################################################
 # simulation - Modelsim
 
-SIM_SCRIPT_NAME = run_$(PERIPH)_test.tcl
+SIM_SCRIPT_NAME = run_$(PERIPH)_$(TB_TYPE)_test.tcl
 
 VSIM_DIR = $(PWD)/sim_modelsim
 
