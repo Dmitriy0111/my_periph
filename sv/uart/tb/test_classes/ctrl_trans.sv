@@ -10,8 +10,8 @@
 `ifndef CTRL_TRANS__SV
 `define CTRL_TRANS__SV
 
-class ctrl_trans extends dvv_bc;
-    `OBJ_BEGIN( ctrl_trans )
+class ctrl_trans extends dvv_item;
+    //`OBJ_BEGIN(ctrl_trans)
 
     rand    logic   [31 : 0]    data;
             logic   [31 : 0]    addr;
@@ -29,7 +29,7 @@ class ctrl_trans extends dvv_bc;
 
     extern function new(string name = "", dvv_bc parent = null);
 
-    extern task print();
+    extern task print_tr();
 
     extern task set_we_re(logic [0 : 0] we_re);
     extern task set_data(logic [31 : 0] data);
@@ -46,13 +46,16 @@ class ctrl_trans extends dvv_bc;
 endclass : ctrl_trans
 
 function ctrl_trans::new(string name = "", dvv_bc parent = null);
+    super.new(name,parent);
 endfunction : new
 
-task ctrl_trans::print();
-    $display("data  : 0x%h", data);
-    $display("addr  : 0x%h", addr);
-    $display("we_re : %s", ( we_re ? "WRITE" : "READ ") );
-endtask : print
+task ctrl_trans::print_tr();
+    string msg;
+    $swrite(msg, "%sdata  : 0x%h", msg, data);
+    $swrite(msg, "%saddr  : 0x%h", msg, addr);
+    $swrite(msg, "%swe_re : %s\n", msg, ( we_re ? "WRITE" : "READ "));
+    print(msg);
+endtask : print_tr
 
 task ctrl_trans::set_we_re(logic [0 : 0] we_re);
     this.we_re = we_re;

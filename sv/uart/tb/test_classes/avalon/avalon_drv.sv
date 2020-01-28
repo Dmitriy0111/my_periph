@@ -10,13 +10,10 @@
 `ifndef AVALON_DRV__SV
 `define AVALON_DRV__SV
 
-class avalon_drv extends dvv_drv #(ctrl_trans);
+class avalon_drv extends base_ctrl_drv;
     `OBJ_BEGIN( avalon_drv )
 
     virtual avalon_if           vif;
-
-    ctrl_trans                  item;
-    ctrl_trans                  resp_item;
 
     avalon_mth                  mth;
 
@@ -38,11 +35,11 @@ task avalon_drv::build();
     if( !dvv_res_db#(virtual avalon_if)::get_res_db("avalon_if_0",vif) )
         $fatal();
 
-    mth = avalon_mth::create::create_obj("[ AVALON DRV MTH ]", this);
+    mth = avalon_mth::create::create_obj("avalon_drv_mth", this);
     mth.vif = vif;
 
-    item = new("[ AVALON DRV ITEM ]", this);
-    resp_item = new("[ AVALON DRV RESP ITEM ]", this);
+    item = new("avalon_drv_item", this);
+    resp_item = new("avalon_drv_resp_item", this);
 
     item_sock = new();
     resp_sock = new();

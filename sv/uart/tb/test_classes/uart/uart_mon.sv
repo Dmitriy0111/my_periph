@@ -23,6 +23,8 @@ class uart_mon extends dvv_mon #(ctrl_trans);
 
     virtual uart_if                     vif;
 
+    string                              msg;
+
     extern function new(string name = "", dvv_bc parent = null);
 
     extern task wait_clk();
@@ -39,8 +41,8 @@ endclass : uart_mon
 
 function uart_mon::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
-    mon_ap = new(this);
-    mon_aep = new();
+    mon_ap = new(this,"mon_ap");
+    mon_aep = new("mon_aep");
 endfunction : new
 
 task uart_mon::wait_clk();
@@ -73,7 +75,8 @@ task uart_mon::mon_tx();
             repeat(this.dfr>>1) this.wait_clk();
         end
         mon_aep.write(rec_data);
-        $display("UART transmitted data on tx wire = %c (%h)", rec_data, rec_data);
+        $swrite(msg, "UART transmitted data on tx wire = %c (%h)\n", rec_data, rec_data);
+        print(msg);
     end
 endtask : mon_tx
 
@@ -90,7 +93,8 @@ task uart_mon::mon_rx();
             rec_data = {vif.uart_rx , rec_data[7 : 1]};
             repeat(this.dfr>>1) this.wait_clk();
         end
-        $display("UART transmitted data on rx wire = %c (%h)", rec_data, rec_data);
+        $swrite(msg, "UART transmitted data on rx wire = %c (%h)\n", rec_data, rec_data);
+        print(msg);
     end
 endtask : mon_rx
 

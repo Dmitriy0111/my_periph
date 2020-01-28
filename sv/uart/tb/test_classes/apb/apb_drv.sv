@@ -10,13 +10,10 @@
 `ifndef APB_DRV__SV
 `define APB_DRV__SV
 
-class apb_drv extends dvv_drv #(ctrl_trans);
+class apb_drv extends base_ctrl_drv;
     `OBJ_BEGIN( apb_drv )
 
     virtual apb_if              vif;
-
-    ctrl_trans                  item;
-    ctrl_trans                  resp_item;
 
     apb_mth                     mth;
 
@@ -38,11 +35,11 @@ task apb_drv::build();
     if( !dvv_res_db#(virtual apb_if)::get_res_db("apb_if_0",vif) )
         $fatal();
 
-    mth = apb_mth::create::create_obj("[ APB DRV MTH ]", this);
+    mth = apb_mth::create::create_obj("apb_drv_mth", this);
     mth.vif = vif;
 
-    item = new("[ APB ITEM ]", this);
-    resp_item = new("[ APB DRV RESP ITEM ]", this);
+    item = new("apb_item", this);
+    resp_item = new("apb_drv_resp_item", this);
 
     item_sock = new();
     resp_sock = new();

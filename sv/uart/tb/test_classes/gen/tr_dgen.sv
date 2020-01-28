@@ -36,8 +36,8 @@ function tr_dgen::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task tr_dgen::build();
-    item = new("[ GEN ITEM ]",this);
-    resp_item = new("[ GEN RESP ITEM ]",this);
+    item = new("gen_item",this);
+    resp_item = new("gen_resp_item",this);
 
     item_sock = new();
     resp_sock = new();

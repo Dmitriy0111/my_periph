@@ -15,6 +15,10 @@ package uart_test_pkg;
     `include "../../rtl/uart.svh"
 
     `include "ctrl_trans.sv"
+
+    `include "base_ctrl/base_ctrl_drv.sv"
+    `include "base_ctrl/base_ctrl_mon.sv"
+    `include "base_ctrl/base_ctrl_agt.sv"
     
     `include "sif/sif_mth.sv"
     `include "sif/sif_drv.sv"
@@ -37,9 +41,9 @@ package uart_test_pkg;
     `include "avalon/avalon_mon.sv"
     `include "avalon/avalon_agt.sv"
 
-    `include "tr_gen.sv"
-    `include "tr_rgen.sv"
-    `include "tr_dgen.sv"
+    `include "gen/tr_gen.sv"
+    `include "gen/tr_rgen.sv"
+    `include "gen/tr_dgen.sv"
 
     `include "test_scb.sv"
     

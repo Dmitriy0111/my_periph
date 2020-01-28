@@ -10,7 +10,7 @@
 `ifndef APB_AGT__SV
 `define APB_AGT__SV
 
-class apb_agt extends dvv_agt;
+class apb_agt extends base_ctrl_agt;
     `OBJ_BEGIN( apb_agt )
 
     apb_drv     drv;
@@ -27,8 +27,8 @@ function apb_agt::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task apb_agt::build();
-    drv = apb_drv ::create::create_obj("[ APB DRV ]", this);
-    mon = apb_mon ::create::create_obj("[ APB MON ]", this);
+    drv = apb_drv ::create::create_obj("apb_drv", this);
+    mon = apb_mon ::create::create_obj("apb_mon", this);
 endtask : build
 
 `endif // APB_AGT__SV

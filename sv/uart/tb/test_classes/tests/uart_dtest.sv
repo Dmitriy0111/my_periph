@@ -34,10 +34,10 @@ task uart_dtest::build();
         $fatal();
 
     case( if_name )
-        "sif_if"    : env = sif_env::create::create_obj("[ SIF ENV ]", this);
-        "apb_if"    : env = apb_env::create::create_obj("[ APB ENV ]", this);
-        "ahb_if"    : env = ahb_env::create::create_obj("[ AHB ENV ]", this);
-        "avalon_if" : env = avalon_env::create::create_obj("[ AVALON ENV ]", this);
+        "sif_if"    : env = sif_env::create::create_obj("sif_env", this);
+        "apb_if"    : env = apb_env::create::create_obj("apb_env", this);
+        "ahb_if"    : env = ahb_env::create::create_obj("ahb_env", this);
+        "avalon_if" : env = avalon_env::create::create_obj("avalon_env", this);
         default     : $fatal("Enviroment undefined");
     endcase
 

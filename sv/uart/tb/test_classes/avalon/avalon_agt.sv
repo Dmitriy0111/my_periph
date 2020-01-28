@@ -10,11 +10,8 @@
 `ifndef AVALON_AGT__SV
 `define AVALON_AGT__SV
 
-class avalon_agt extends dvv_agt;
+class avalon_agt extends base_ctrl_agt;
     `OBJ_BEGIN( avalon_agt )
-
-    avalon_drv  drv;
-    avalon_mon  mon;
 
     extern function new(string name = "", dvv_bc parent = null);
 
@@ -27,8 +24,8 @@ function avalon_agt::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task avalon_agt::build();
-    drv = avalon_drv::create::create_obj("[ AVALON DRV ]", this);
-    mon = avalon_mon::create::create_obj("[ AVALON MON ]", this);
+    drv = avalon_drv::create::create_obj("avalon_drv", this);
+    mon = avalon_mon::create::create_obj("avalon_mon", this);
 endtask : build
 
 `endif // AVALON_AGT__SV

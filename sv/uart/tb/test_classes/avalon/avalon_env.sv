@@ -15,7 +15,9 @@ class avalon_env extends dvv_env;
 
     tr_gen                      gen;
     avalon_agt                  agt;
+    // avalon_cov                  cov;
     uart_agt                    u_agt;
+    test_scb                    scb;
 
     dvv_sock    #(ctrl_trans)   drv2gen_sock;
     dvv_sock    #(ctrl_trans)   gen2drv_sock;
@@ -37,18 +39,21 @@ task avalon_env::build();
     if( !dvv_res_db#(string)::get_res_db("test_type",test_type) )
         $fatal();
 
-    agt = avalon_agt::create::create_obj("[ AVALON AGT ]",this);
+    agt = avalon_agt::create::create_obj("avalon_agt",this);
+    // cov = avalon_cov ::create::create_obj("avalon_cov", this);
+
+    scb = test_scb::create::create_obj("test_scb", this);
 
     if( test_type == "direct_test" )
     begin
-        gen = tr_dgen ::create::create_obj("[ DIRECT GEN ]", this);
+        gen = tr_dgen ::create::create_obj("direct_gen", this);
     end 
     else if( test_type == "rand_test" )
     begin
-        gen = tr_rgen ::create::create_obj("[ RANDOM GEN ]", this);
+        gen = tr_rgen ::create::create_obj("random_gen", this);
     end
 
-    u_agt = uart_agt::create::create_obj("[ UART AGT ]", this);
+    u_agt = uart_agt::create::create_obj("uart_agt", this);
 
     gen2drv_sock = new();
     if( gen2drv_sock == null )
@@ -68,6 +73,9 @@ task avalon_env::connect();
 
     gen.u_agt_aep.connect(u_agt.mon.mon_ap);
     gen.u_agt_aep.connect(u_agt.drv.drv_ap);
+
+    gen.scb_aep.connect(scb.ctrl_ap);
+    u_agt.mon.mon_aep.connect(scb.uart_ap);
 endtask : connect
 
 `endif // AVALON_ENV__SV

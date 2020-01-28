@@ -44,7 +44,7 @@ endclass : sif_cov
 
 function sif_cov::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
-    item_ap = new(this);
+    item_ap = new(this,"item_ap");
     sif_cg = new();
 endfunction : new
 

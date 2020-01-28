@@ -24,6 +24,8 @@ class test_scb extends dvv_scb;
     logic   [7 : 0]     ctrl_q [$];
     logic   [7 : 0]     uart_q [$];
 
+    string              msg;
+
     extern function new(string name = "", dvv_bc parent = null);
 
     extern function void write_ctrl(int item);
@@ -36,8 +38,8 @@ endclass : test_scb
 
 function test_scb::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
-    ctrl_ap = new(this);
-    uart_ap = new(this);
+    ctrl_ap = new(this,"ctrl_ap");
+    uart_ap = new(this,"uart_ap");
 endfunction : new
 
 function void test_scb::write_ctrl(int item);
@@ -57,9 +59,15 @@ task test_scb::run();
         begin
             wait( (ctrl_q.size() != 0 ) && ( uart_q.size() != 0 ) );
             if( ctrl_q[0] == uart_q[0] )
-                $display("TEST PASS %h %h", ctrl_q.pop_front(), uart_q.pop_front() );
+            begin
+                $swrite(msg, "TEST PASS %h %h\n", ctrl_q.pop_front(), uart_q.pop_front());
+                print(msg);
+            end
             else
-                $display("TEST FAIL %h %h", ctrl_q.pop_front(), uart_q.pop_front() );
+            begin
+                $swrite(msg, "TEST FAIL %h %h\n", ctrl_q.pop_front(), uart_q.pop_front());
+                print(msg);
+            end
         end
     join_none
 endtask : run

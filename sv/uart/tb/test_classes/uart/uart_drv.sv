@@ -38,7 +38,7 @@ endclass : uart_drv
 
 function uart_drv::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
-    drv_ap = new(this);
+    drv_ap = new(this,"drv_ap");
 endfunction : new
 
 task uart_drv::wait_clk();
@@ -49,7 +49,7 @@ task uart_drv::build();
     if( !dvv_res_db#(virtual uart_if)::get_res_db("uif_0",vif) )
         $fatal();
 
-    item = new("[ UART DRV ITEM ]", this);
+    item = new("uart_drv_item", this);
 
     item_sock = new();
 endtask : build

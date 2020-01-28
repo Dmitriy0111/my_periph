@@ -3,7 +3,7 @@
 *  Autor           :   Vlasov D.V.
 *  Data            :   2020.01.09
 *  Language        :   SystemVerilog
-*  Description     :   This is sif enviroment
+*  Description     :   This is simple interface enviroment
 *  Copyright(c)    :   2019 - 2020 Vlasov D.V.
 */
 
@@ -15,7 +15,7 @@ class sif_env extends dvv_env;
 
     tr_gen                      gen;
     sif_agt                     agt;
-    sif_cov                     cov;
+    // sif_cov                     cov;
     uart_agt                    u_agt;
     test_scb                    scb;
 
@@ -39,21 +39,21 @@ task sif_env::build();
     if( !dvv_res_db#(string)::get_res_db("test_type",test_type) )
         $fatal();
 
-    agt = sif_agt ::create::create_obj("[ SIF AGT ]", this);
-    cov = sif_cov ::create::create_obj("[ SIF COV ]", this);
+    agt = sif_agt ::create::create_obj("sif_agt", this);
+    // cov = sif_cov ::create::create_obj("sif_cov", this);
     
-    scb = test_scb::create::create_obj("[ TEST SCB ]", this);
+    scb = test_scb::create::create_obj("test_scb", this);
 
     if( test_type == "direct_test" )
     begin
-        gen = tr_dgen ::create::create_obj("[ DIRECT GEN ]", this);
+        gen = tr_dgen ::create::create_obj("direct_gen", this);
     end 
     else if( test_type == "rand_test" )
     begin
-        gen = tr_rgen ::create::create_obj("[ RANDOM GEN ]", this);
+        gen = tr_rgen ::create::create_obj("random_gen", this);
     end
 
-    u_agt = uart_agt::create::create_obj("[ UART AGT ]", this);
+    u_agt = uart_agt::create::create_obj("uart_agt", this);
 
     gen2drv_sock = new();
     if( gen2drv_sock == null )
@@ -71,7 +71,7 @@ task sif_env::connect();
     agt.drv.resp_sock.connect(drv2gen_sock);
     gen.resp_sock.connect(drv2gen_sock);
     
-    agt.mon.cov_aep.connect(cov.item_ap);
+    // agt.mon.cov_aep.connect(cov.item_ap);
 
     gen.u_agt_aep.connect(u_agt.mon.mon_ap);
     gen.u_agt_aep.connect(u_agt.drv.drv_ap);

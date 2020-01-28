@@ -10,13 +10,10 @@
 `ifndef SIF_DRV__SV
 `define SIF_DRV__SV
 
-class sif_drv extends dvv_drv #(ctrl_trans);
+class sif_drv extends base_ctrl_drv;
     `OBJ_BEGIN( sif_drv )
 
     virtual simple_if           ctrl_vif;
-
-    ctrl_trans                  item;
-    ctrl_trans                  resp_item;
 
     sif_mth                     mth;
 
@@ -38,11 +35,11 @@ task sif_drv::build();
     if( !dvv_res_db#(virtual simple_if)::get_res_db("sif_if_0",ctrl_vif) )
         $fatal();
 
-    mth = sif_mth::create::create_obj("[ SIF DRV MTH ]", this);
+    mth = sif_mth::create::create_obj("sif_drv_mth", this);
     mth.ctrl_vif = ctrl_vif;
 
-    item = new("[ SIF DRV ITEM ]", this);
-    resp_item = new("[ SIF DRV RESP ITEM ]", this);
+    item = new("sif_drv_item", this);
+    resp_item = new("sif_drv_resp_item", this);
 
     item_sock = new();
     resp_sock = new();
@@ -72,11 +69,11 @@ task sif_drv::run();
         forever
         begin
             item_sock.rec_msg(item);
-            
+           
             if( item.get_we_re() )
-            write_reg();
+                write_reg();
             else
-            read_reg();
+                read_reg();
             item_sock.trig_sock();
         end
     join_none

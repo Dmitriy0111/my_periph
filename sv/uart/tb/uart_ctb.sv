@@ -130,12 +130,12 @@ module uart_ctb();
         case( test_type )
             "rand_test" :   
             begin
-                automatic uart_rtest uart_rtest_ = new("[ UART RANDOM TEST ]", null);
+                automatic uart_rtest uart_rtest_ = new("uart_random_test", null);
                 test = uart_rtest_;
             end
             "direct_test" :   
             begin
-                automatic uart_dtest uart_dtest_ = new("[ UART DIRECT TEST ]", null);
+                automatic uart_dtest uart_dtest_ = new("uart_direct_test", null);
                 test = uart_dtest_;
             end
         endcase

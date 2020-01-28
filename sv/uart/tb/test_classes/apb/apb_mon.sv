@@ -10,7 +10,7 @@
 `ifndef APB_MON__SV
 `define APB_MON__SV
 
-class apb_mon extends dvv_mon #(ctrl_trans);
+class apb_mon extends base_ctrl_drv;
     `OBJ_BEGIN( apb_mon )
 
     virtual apb_if  vif;
@@ -32,7 +32,7 @@ task apb_mon::build();
     if( !dvv_res_db#(virtual apb_if)::get_res_db("apb_if_0",vif) )
         $fatal();
 
-    mth = apb_mth::create::create_obj("[ APB MON MTH ]", this);
+    mth = apb_mth::create::create_obj("apb_mon_mth", this);
     mth.vif = vif;
 endtask : build
 

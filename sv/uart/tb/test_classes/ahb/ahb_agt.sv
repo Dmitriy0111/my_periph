@@ -27,8 +27,8 @@ function ahb_agt::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task ahb_agt::build();
-    drv = ahb_drv ::create::create_obj("[ AHB DRV ]", this);
-    mon = ahb_mon ::create::create_obj("[ AHB MON ]", this);
+    drv = ahb_drv ::create::create_obj("ahb_drv", this);
+    mon = ahb_mon ::create::create_obj("ahb_drv", this);
 endtask : build
 
 `endif // AHB_AGT__SV

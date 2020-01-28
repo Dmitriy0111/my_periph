@@ -28,13 +28,13 @@ endclass : tr_rgen
 
 function tr_rgen::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
-    u_agt_aep = new();
-    scb_aep = new();
+    u_agt_aep = new("u_agt_aep");
+    scb_aep = new("scb_aep");
 endfunction : new
 
 task tr_rgen::build();
-    item = new("[ GEN ITEM ]",this);
-    resp_item = new("[ GEN RESP ITEM ]",this);
+    item = new("gen_item",this);
+    resp_item = new("gen_resp_item",this);
 
     item_sock = new();
     resp_sock = new();
@@ -70,14 +70,14 @@ task tr_rgen::run();
                             item.set_we_re( '1 );
                             item_sock.send_msg(item);
                             item_sock.wait_sock();
-                            $display("set_cr");
+                            print("set_cr\n");
                         end
                     };
                     set_irq_m       :
                     {   
                         if( $urandom_range(0,1) )
                         begin
-                            $display("set_irq_m_1");
+                            print("set_irq_m_1\n");
                             if( ! uart_p.irq_m_c.data[0] )
                             begin
                                 uart_p.irq_m_c.data[0] = '1;
@@ -90,7 +90,7 @@ task tr_rgen::run();
                         end
                         else
                         begin
-                            $display("set_irq_m_0");
+                            print("set_irq_m_0\n");
                             if(   uart_p.irq_m_c.data[0] )
                             begin
                                 uart_p.irq_m_c.data[0] = '0;
@@ -114,7 +114,7 @@ task tr_rgen::run();
                         u_agt_aep.write(item.get_data());
                         item_sock.send_msg(item);
                         item_sock.wait_sock();
-                        $display("set_dfr");
+                        print("set_dfr\n");
                     };
                     set_tr_data     : 
                     { 
@@ -126,7 +126,7 @@ task tr_rgen::run();
                         scb_aep.write(item.get_data());
                         item_sock.send_msg(item);
                         item_sock.wait_sock();
-                        $display("set_tr_data"); 
+                        print("set_tr_data\n");
                     };
                     wait_tr         :
                         if( uart_p.irq_m_c.data[0] )
@@ -149,7 +149,7 @@ task tr_rgen::run();
                             if( ! ( resp_item.get_data() & 32'h4 ) )
                             break;
                         end
-                        $display("wait_tr_done"); 
+                        print("wait_tr_done\n");
                     };
                     wait_tr_irq     : 
                     { 
@@ -168,7 +168,7 @@ task tr_rgen::run();
                         item.set_we_re( '1 );
                         item_sock.send_msg(item);
                         item_sock.wait_sock();
-                        $display("wait_tr_irq"); 
+                        print("wait_tr_irq\n");
                     };
                 endsequence
             end

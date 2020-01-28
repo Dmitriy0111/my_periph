@@ -35,17 +35,17 @@ endclass : ahb_drv
 
 function ahb_drv::new(string name = "", dvv_bc parent = null);
     super.new(name,parent);
-    u_mon_aep = new();
+    u_mon_aep = new("u_mon_aep");
 endfunction : new
 
 task ahb_drv::build();
     if( !dvv_res_db#(virtual ahb_if)::get_res_db("ahb_if_0",vif) )
         $fatal();
 
-    mth = ahb_mth::create::create_obj("[ AHB DRV MTH ]", this);
+    mth = ahb_mth::create::create_obj("ahb_drv_mth", this);
     mth.vif = vif;
 
-    item = new("[ AHB ITEM ]", this);
+    item = new("ahb_item", this);
     item_sock = new();
 endtask : build
 

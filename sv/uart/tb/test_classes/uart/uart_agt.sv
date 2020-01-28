@@ -27,8 +27,8 @@ function uart_agt::new(string name = "", dvv_bc parent = null);
 endfunction : new
 
 task uart_agt::build();
-    mon = uart_mon::create::create_obj("[ UART MON ]", this);
-    drv = uart_drv::create::create_obj("[ UART DRV ]", this);
+    mon = uart_mon::create::create_obj("uart_mon", this);
+    drv = uart_drv::create::create_obj("uart_drv", this);
 endtask : build
 
 `endif // UART_AGT__SV

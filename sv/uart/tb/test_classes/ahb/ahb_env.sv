@@ -36,18 +36,18 @@ task ahb_env::build();
     if( !dvv_res_db#(string)::get_res_db("test_type",test_type) )
         $fatal();
 
-    agt = ahb_agt::create::create_obj("[ AHB AGT ]",this);
+    agt = ahb_agt::create::create_obj("ahb_agt",this);
 
     if( test_type == "direct_test" )
     begin
-        gen = tr_dgen ::create::create_obj("[ DIRECT GEN ]", this);
+        gen = tr_dgen ::create::create_obj("direct_gen", this);
     end 
     else if( test_type == "rand_test" )
     begin
-        gen = tr_rgen ::create::create_obj("[ RANDOM GEN ]", this);
+        gen = tr_rgen ::create::create_obj("random_gen", this);
     end
 
-    u_mon = uart_mon::create::create_obj("[ UART MON ]", this);
+    u_mon = uart_mon::create::create_obj("uart_mon", this);
 
     gen2drv_sock = new();
     if( gen2drv_sock == null )

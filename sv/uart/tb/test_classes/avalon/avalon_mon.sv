@@ -10,7 +10,7 @@
 `ifndef AVALON_MON__SV
 `define AVALON_MON__SV
 
-class avalon_mon extends dvv_mon #(ctrl_trans);
+class avalon_mon extends base_ctrl_mon;
     `OBJ_BEGIN( avalon_mon )
 
     virtual avalon_if   vif;
@@ -32,7 +32,7 @@ task avalon_mon::build();
     if( !dvv_res_db#(virtual avalon_if)::get_res_db("avalon_if_0",vif) )
         $fatal();
 
-    mth = avalon_mth::create::create_obj("[ AVALON MON MTH ]", this);
+    mth = avalon_mth::create::create_obj("avalon_mon_mth", this);
     mth.vif = vif;
 endtask : build
 
