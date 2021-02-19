@@ -9,12 +9,11 @@ help:
 	@true
 
 PWD     := $(shell pwd)
-RUN_DIR  = $(PWD)/$(HDL_LANG)/run
+RUN_DIR  = $(PWD)/run
 
-HDL_LANG ?= sv
-PERIPH ?= uart
+PERIPH ?= gpio
 
-TB_TYPE ?= oop
+TB_TYPE ?= simple
 
 ########################################################
 # common make targets
@@ -36,7 +35,7 @@ sim: sim_gui
 
 SIM_SCRIPT_NAME = run_$(PERIPH)_$(TB_TYPE)_test.tcl
 
-VSIM_DIR = $(PWD)/sim_modelsim
+VSIM_DIR = $(PWD)/sim_modelsim1
 
 VLIB_BIN = cd $(VSIM_DIR) && vlib
 VLOG_BIN = cd $(VSIM_DIR) && vlog
